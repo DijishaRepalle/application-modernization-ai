@@ -1,0 +1,5 @@
+rootProject.name = 'application-modernization-ai'
+include 'application-modernization-ai-app'
+include 'application-modernization-ai-dao'
+include 'application-modernization-ai-service'
+include 'application-modernization-ai-data-model'

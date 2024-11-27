@@ -1,0 +1,12 @@
+plugins {
+    id "org.springframework.boot" version "3.1.1"
+}
+repositories {
+    mavenCentral()
+}
+dependencies {
+    implementation project(":application-modernization-ai-data-model")
+    implementation project(":application-modernization-ai-dao")
+    implementation project(":application-modernization-ai-service")
+    implementation 'org.springframework.boot:spring-boot-starter'
+}

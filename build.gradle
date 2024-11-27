@@ -1,0 +1,87 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.1.1'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+repositories {
+    mavenCentral()
+}
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+ext {
+    springBootVersion = '3.1.1'
+    lombokVersion = '1.18.20'
+    postgresVersion = '42.5.0'
+    flywayVersion = '8.5.13'
+    collectionUtilsVersion = '4.4'
+    apacheCommonsVersion = '3.0'
+    aspectVersion = '1.6.2'
+    starterMailVersion = '3.1.2'
+    jwtVersion = '0.11.5'
+    springDocOpenApiVersion = '2.5.0'
+    apachePoiVersion = '5.3.0'
+}
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'io.spring.dependency-management'
+    group = 'com.bilvantis'
+    version = '0.0.1-SNAPSHOT'
+
+    java {
+        sourceCompatibility = '20'
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    /*repositories {
+        mavenCentral()
+    }*/
+    dependencyManagement {
+        imports {
+            mavenBom('org.springframework.boot:spring-boot-dependencies:3.1.1')
+        }
+    }
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter'
+        implementation group: 'org.flywaydb', name: 'flyway-core', version: flywayVersion
+        implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        compileOnly 'org.projectlombok:lombok'
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: springBootVersion
+        implementation group: 'org.postgresql', name: 'postgresql', version: postgresVersion
+        implementation group: 'org.springframework.boot', name: 'spring-boot-devtools', version: springBootVersion
+        implementation group: 'org.apache.commons', name: 'commons-collections4', version: collectionUtilsVersion
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: springBootVersion
+        implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
+        implementation group: 'org.apache.commons', name: 'commons-lang3', version: apacheCommonsVersion
+        annotationProcessor 'org.projectlombok:lombok'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        implementation group: 'org.aspectj', name: 'aspectjtools', version: aspectVersion
+        implementation 'org.apache.commons:commons-lang3:3.12.0'
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: starterMailVersion
+        implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: jwtVersion
+        implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: jwtVersion
+        implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: jwtVersion
+        implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: springDocOpenApiVersion
+        implementation group: 'org.apache.poi', name: 'poi-ooxml', version: apachePoiVersion
+        implementation group: 'org.apache.poi', name: 'poi', version: apachePoiVersion
+        implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+        implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+
+    }
+
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
+}
