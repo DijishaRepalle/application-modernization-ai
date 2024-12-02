@@ -23,6 +23,12 @@ public class UserInformationController {
         this.userInformationService = userInformationService;
     }
 
+    /**
+     * creates a user dto
+     *
+     * @param projectInformationDTO
+     * @return a ResponseEntity containing the created project information DTO
+     */
     @PostMapping("/save-user")
     public ResponseEntity<UserInformationDTO> createProject(@Valid @NotNull @RequestBody UserInformationDTO projectInformationDTO) {
         UserInformationDTO saveProjectDetails = userInformationService.createProject(projectInformationDTO);

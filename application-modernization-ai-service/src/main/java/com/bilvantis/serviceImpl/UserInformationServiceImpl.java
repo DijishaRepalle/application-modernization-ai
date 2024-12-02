@@ -8,6 +8,7 @@ import com.bilvantis.repository.UserInformationRepository;
 import com.bilvantis.service.UserInformationService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +20,13 @@ import static com.bilvantis.util.UserInformationSupport.convertUsersDTOTOUsersEn
 @Service
 @Slf4j
 public class UserInformationServiceImpl implements UserInformationService<UserInformation, UserInformationDTO> {
+    public static final String ROLE = "ADMIN";
     private final UserInformationRepository userInformationRepository;
 
     public UserInformationServiceImpl(UserInformationRepository userInformationRepository) {
         this.userInformationRepository = userInformationRepository;
+
+
     }
 
     @Override
@@ -37,5 +41,12 @@ public class UserInformationServiceImpl implements UserInformationService<UserIn
             log.error(EXCEPTION_ERROR_MESSAGE, this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName());
             throw new ProjectImplementationSaveFailedException(e.getMessage());
         }
+    }
+
+
+    @Override
+    public Boolean getRoleBasedOnUserId(String userId) {
+        String role = userInformationRepository.findRoleByUserId(userId);
+        return StringUtils.equalsIgnoreCase(role, ROLE);
     }
 }

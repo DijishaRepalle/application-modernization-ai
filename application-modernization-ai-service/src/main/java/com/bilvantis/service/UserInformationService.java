@@ -6,4 +6,7 @@ import com.bilvantis.model.UserInformationDTO;
 public interface UserInformationService<I extends UserInformation, J extends UserInformationDTO> {
 
     UserInformationDTO createProject(UserInformationDTO userInformationDTO);
+
+    Boolean getRoleBasedOnUserId(String userId);
+
 }
