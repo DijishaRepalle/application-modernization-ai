@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,7 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
             if (ObjectUtils.isEmpty(projectInformationDTO)) {
                 throw new DataNotFoundException(PROJECT_DETAILS_NOT_FOUND);
             }
+
             ProjectInformation saveProjectDetails = projectInformationRepository.save(convertProjectDTOToProjectEntity(projectInformationDTO));
             return convertProjectEntityToProjectDTO(saveProjectDetails);
         } catch (DataAccessException e) {
@@ -70,7 +72,7 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
             Optional<ProjectInformation> projectInformation = projectInformationRepository.findById(projectId);
             if (projectInformation.isPresent()) {
                 ProjectInformation updatedInfo = projectInformation.get();
-//                updatedInfo.setIsActive(false);
+                updatedInfo.setIsActive(false);
                 projectInformationRepository.save(updatedInfo);
             } else {
                 throw new DataNotFoundException(String.format(PROJECT_ID_NOT_FOUND));
@@ -84,13 +86,13 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
     @Override
     public ProjectInformationDTO updateProjectByProjectId(String projectId, ProjectInformationDTO projectInformationDTO) {
         try {
-            if (ObjectUtils.isEmpty(projectId)) {
+            if (Objects.isNull(projectId) || Objects.isNull(projectInformationDTO)) {
                 throw new DataNotFoundException(PROJECT_ID_NOT_FOUND);
             }
-            Optional<ProjectInformation> optionalProjectInformation = projectInformationRepository.findById(projectId);
-            if (optionalProjectInformation.isPresent()) {
-                ProjectInformation existingProjectInfo = projectInformationRepository.save(convertProjectDTOToProjectEntity(projectInformationDTO));
-                return convertProjectEntityToProjectDTO(existingProjectInfo);
+            Optional<ProjectInformation> existingProjectInfo = projectInformationRepository.findById(projectId);
+            if (existingProjectInfo.isPresent()) {
+                ProjectInformation updateProject = projectInformationRepository.save(convertProjectDTOToProjectEntity(projectInformationDTO));
+                return convertProjectEntityToProjectDTO(updateProject);
             }
             throw new ApplicationException(PROJECT_ID_NOT_FOUND);
 

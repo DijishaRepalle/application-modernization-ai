@@ -20,4 +20,5 @@ public class UserInformation extends BaseDTO {
     private String phoneNumber;
     private String otp;
     private Long otpGenerationTime;
+    private String role;
 }
