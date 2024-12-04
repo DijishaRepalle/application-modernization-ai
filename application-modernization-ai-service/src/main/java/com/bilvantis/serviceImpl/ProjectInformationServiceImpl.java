@@ -69,11 +69,9 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
             }
             Optional<ProjectInformation> projectInformation = projectInformationRepository.findById(projectId);
             if (projectInformation.isPresent()) {
-                ProjectInformation updatedInfo = projectInformation.get();
-//                updatedInfo.setIsActive(false);
-                projectInformationRepository.save(updatedInfo);
+                projectInformationRepository.deleteById(projectId);
             } else {
-                throw new DataNotFoundException(String.format(PROJECT_ID_NOT_FOUND));
+                throw new DataNotFoundException(PROJECT_ID_NOT_FOUND);
             }
         } catch (DataAccessException e) {
             log.error(EXCEPTION_ERROR_MESSAGE, this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName());
@@ -82,18 +80,17 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
     }
 
     @Override
-    public ProjectInformationDTO updateProjectByProjectId(String projectId, ProjectInformationDTO projectInformationDTO) {
+    public ProjectInformationDTO updateProjectByProjectId(String projectId, ProjectInformationDTO projectInfoDTO) {
         try {
-            if (ObjectUtils.isEmpty(projectId)) {
-                throw new DataNotFoundException(PROJECT_ID_NOT_FOUND);
+            Optional<ProjectInformation> optionalProject = projectInformationRepository.findById(projectId);
+            if (!optionalProject.isPresent()) {
+                throw new DataNotFoundException(PROJECT_DETAILS_NOT_FOUND);
             }
-            Optional<ProjectInformation> optionalProjectInformation = projectInformationRepository.findById(projectId);
-            if (optionalProjectInformation.isPresent()) {
-                ProjectInformation existingProjectInfo = projectInformationRepository.save(convertProjectDTOToProjectEntity(projectInformationDTO));
-                return convertProjectEntityToProjectDTO(existingProjectInfo);
-            }
-            throw new ApplicationException(PROJECT_ID_NOT_FOUND);
-
+            ProjectInformation projectInformation = optionalProject.get();
+            projectInformation.setName(projectInfoDTO.getName());
+            projectInformation.setLanguage(projectInfoDTO.getLanguage());
+            ProjectInformation updatedProject = projectInformationRepository.save(projectInformation);
+            return ProjectInformationSupport.convertProjectEntityToProjectDTO(updatedProject);
         } catch (DataAccessException e) {
             log.error(EXCEPTION_ERROR_MESSAGE, this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName());
             throw new ApplicationException(e.getMessage());
