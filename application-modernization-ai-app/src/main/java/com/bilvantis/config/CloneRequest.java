@@ -1,0 +1,15 @@
+package com.bilvantis.config;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CloneRequest {
+    private String repoUrl;
+
+    private String token;
+
+}
