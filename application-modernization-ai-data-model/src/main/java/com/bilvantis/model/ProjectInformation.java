@@ -22,6 +22,9 @@ public class ProjectInformation extends BaseDTO {
     private String status;
     private String language;
     private String version;
+    private String projectCode;
+    private String repoUrl;
+    private String token;
     // One-to-Many Relationship
     @DBRef
     private List<UserInformation> taggedUsers;

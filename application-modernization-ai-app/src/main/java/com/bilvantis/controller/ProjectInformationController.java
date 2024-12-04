@@ -1,5 +1,6 @@
 package com.bilvantis.controller;
 
+import com.bilvantis.model.ProjectInformation;
 import com.bilvantis.model.ProjectInformationDTO;
 import com.bilvantis.service.ProjectInformationService;
 import jakarta.validation.Valid;
@@ -14,11 +15,12 @@ import java.util.List;
 @RequestMapping("/project-service")
 public class ProjectInformationController {
 
-    private final ProjectInformationService projectInformationService;
+    private final ProjectInformationService<ProjectInformation,ProjectInformationDTO> projectInformationService;
 
-    public ProjectInformationController(ProjectInformationService projectInformationService) {
+    public ProjectInformationController(ProjectInformationService<ProjectInformation, ProjectInformationDTO> projectInformationService) {
         this.projectInformationService = projectInformationService;
     }
+
 
     @PostMapping
     public ResponseEntity<ProjectInformationDTO> createProject(@Valid @NotNull @RequestBody ProjectInformationDTO projectInformationDTO) {

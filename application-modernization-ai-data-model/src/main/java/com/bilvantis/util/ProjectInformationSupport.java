@@ -5,6 +5,7 @@ import com.bilvantis.model.ProjectInformationDTO;
 import com.bilvantis.model.UserInformation;
 import com.bilvantis.model.UserInformationDTO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ProjectInformationSupport {
@@ -17,10 +18,11 @@ public class ProjectInformationSupport {
         projectDTO.setLanguage(project.getLanguage());
         projectDTO.setOwnerId(project.getOwnerId());
         projectDTO.setVersion(project.getVersion());
-        projectDTO.setCreatedDate(project.getCreatedDate());
+        projectDTO.setCreatedDate(LocalDateTime.now());
         projectDTO.setCreatedBy(project.getCreatedBy());
-        projectDTO.setUpdatedDate(project.getUpdatedDate());
-        projectDTO.setUpdatedBy(project.getUpdatedBy());
+        projectDTO.setRepoUrl(project.getRepoUrl());
+        projectDTO.setProjectCode(project.getProjectCode());
+        projectDTO.setToken(project.getToken());
         if (project.getTaggedUsers() != null) {
             List<UserInformationDTO> userDTOList = project.getTaggedUsers().stream().map(UserInformationSupport::convertUserEntityTOUserDTO).toList();
             projectDTO.setTaggedUsers(userDTOList);
@@ -38,10 +40,11 @@ public class ProjectInformationSupport {
         project.setLanguage(projectDTO.getLanguage());
         project.setOwnerId(projectDTO.getOwnerId());
         project.setVersion(projectDTO.getVersion());
-        project.setCreatedDate(projectDTO.getCreatedDate());
+        project.setCreatedDate(LocalDateTime.now());
         project.setCreatedBy(projectDTO.getCreatedBy());
-        project.setUpdatedDate(projectDTO.getUpdatedDate());
-        project.setUpdatedBy(projectDTO.getUpdatedBy());
+        project.setRepoUrl(projectDTO.getRepoUrl());
+        project.setProjectCode(projectDTO.getProjectCode());
+        project.setToken(projectDTO.getToken());
         if (projectDTO.getTaggedUsers() != null) {
             List<UserInformation> userList = projectDTO.getTaggedUsers().stream().map(UserInformationSupport::convertUsersDTOTOUsersEntity).toList();
             project.setTaggedUsers(userList);
