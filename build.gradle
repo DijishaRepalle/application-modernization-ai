@@ -34,7 +34,7 @@ subprojects {
     version = '0.0.1-SNAPSHOT'
 
     java {
-        sourceCompatibility = '20'
+        sourceCompatibility = '17'
     }
 
     configurations {
