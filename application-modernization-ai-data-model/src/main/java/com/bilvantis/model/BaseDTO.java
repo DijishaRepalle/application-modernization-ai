@@ -19,5 +19,4 @@ public class BaseDTO {
 
     private LocalDateTime updatedDate;
 
-    private Boolean isActive;
 }
