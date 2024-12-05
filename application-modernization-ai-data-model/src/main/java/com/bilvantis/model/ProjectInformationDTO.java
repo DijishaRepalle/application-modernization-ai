@@ -33,5 +33,8 @@ public class ProjectInformationDTO extends BaseDTO {
     private String language;
     private String version;
     private List<UserInformationDTO> taggedUsers;
+    private String projectCode;
+    private String repoUrl;
+    private String token;
 
 }
