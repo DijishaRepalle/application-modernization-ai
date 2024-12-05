@@ -1,7 +1,4 @@
 spring:
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/app_modernization
   profiles:
     active: default
   mail:
@@ -16,6 +13,9 @@ spring:
           starttls:
             enable: true
     default-encoding: UTF-8
-
+  data:
+    mongodb:
+      uri: mongodb+srv://nishanthkothapalli:ICtX06mSnchwBmrT@cluster0.rrxmg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      database: app_modernization
 server:
   port: 8081
