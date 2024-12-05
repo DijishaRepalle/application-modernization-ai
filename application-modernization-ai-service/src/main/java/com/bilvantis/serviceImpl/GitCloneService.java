@@ -49,7 +49,6 @@ public class GitCloneService {
                 cloneDirectory.mkdirs();
             }
 
-            // Construct the clone command with the token and URL from the project information
             ProcessBuilder builder = new ProcessBuilder("git", "clone", repoUrl, cloneDirectoryPath);
             builder.redirectErrorStream(true);
             Process process = builder.start();
@@ -57,7 +56,7 @@ public class GitCloneService {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    log.info(line); // Assuming you have a logger setup
+                    log.info(line);
                 }
             }
 
