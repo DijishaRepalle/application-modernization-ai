@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -64,14 +65,15 @@ public class ProcessServiceImpl implements ProcessService {
 
     @Override
     public List<ProcessTransaction> fetchAllProjectScansOnJobIdForProject(String projectCode) {
-        MatchOperation matchOperation = Aggregation.match(Criteria.where("projectCode").is(projectCode));
-        GroupOperation groupOperation = Aggregation.group("jobId", "projectCode")
-                .first(Aggregation.ROOT).as("uniqueRecord");
+        List<ProcessTransaction> processTransactions = processTransactionRepository.findAll(projectCode);
 
-        Aggregation aggregation = Aggregation.newAggregation(matchOperation, groupOperation);
-        AggregationResults<ProcessTransaction> results = mongoTemplate.aggregate(aggregation, "process_transaction", ProcessTransaction.class);
-
-        return results.getMappedResults();
+        Map<String, ProcessTransaction> groupedByJobId = processTransactions.stream()
+                .collect(Collectors.toMap(
+                        ProcessTransaction::getJobId,
+                        transaction -> transaction,
+                        (existing, replacement) -> existing // Keep the existing record if jobId is duplicated
+                ));
+        return new ArrayList<>(groupedByJobId.values());
     }
 
     @Override
