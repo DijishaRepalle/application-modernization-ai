@@ -55,7 +55,7 @@ public class UserInformationServiceImpl implements UserInformationService<UserIn
             if (userInformationRepository.existsByEmail(user.getEmail())) {
                 throw new BadRequestException("Email is already in use: " + user.getEmail());
             }
-            user.setId(String.valueOf(UUID.randomUUID()));
+            user.setId(UUID.fromString(String.valueOf(UUID.randomUUID())));
             user.setCreatedDate(LocalDateTime.now());
             return userInformationRepository.save(user);
         } catch (DataAccessException e) {
