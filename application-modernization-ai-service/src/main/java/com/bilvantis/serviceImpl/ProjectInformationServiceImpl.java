@@ -69,9 +69,7 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
             }
             Optional<ProjectInformation> projectInformation = projectInformationRepository.findById(projectId);
             if (projectInformation.isPresent()) {
-                ProjectInformation updatedInfo = projectInformation.get();
-//                updatedInfo.setIsActive(false);
-                projectInformationRepository.save(updatedInfo);
+                projectInformationRepository.deleteById(projectId);
             } else {
                 throw new DataNotFoundException(PROJECT_ID_NOT_FOUND);
             }
