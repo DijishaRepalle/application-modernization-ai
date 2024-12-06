@@ -19,8 +19,7 @@ public class ProcessTransaction extends BaseDTO {
     private UUID processTransactionId;
     @DBRef
     private ProcessSteps stepId;
-    @DBRef
-    private ProjectInformation projectId;
+    private String projectCode;
     private String status;
     private Integer trial;
     private String jobId;

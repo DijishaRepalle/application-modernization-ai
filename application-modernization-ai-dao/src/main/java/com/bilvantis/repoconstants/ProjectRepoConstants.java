@@ -1,4 +1,4 @@
-package com.bilvantis.repoConstants;
+package com.bilvantis.repoconstants;
 
 public class ProjectRepoConstants {
 }
