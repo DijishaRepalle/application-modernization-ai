@@ -27,8 +27,8 @@ public class ProcessController {
     }
 
     @GetMapping("/scan")
-    public ResponseEntity<List<ProcessTransaction>> fetchProjectUniqueProcesses(@RequestParam("projectCode") String projectCode) {
-        return new ResponseEntity<>(processService.fetchAllProjectScansOnJobIdForProject(projectCode), HttpStatus.OK);
+    public ResponseEntity<List<ProcessTransaction>> fetchProjectUniqueProcesses() {
+        return new ResponseEntity<>(processService.fetchAllProjectScansOnJobId(), HttpStatus.OK);
     }
 
     @GetMapping("/scan/project")

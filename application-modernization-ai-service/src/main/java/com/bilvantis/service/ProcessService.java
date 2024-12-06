@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface ProcessService {
 
+    List<ProcessTransaction> fetchAllProjectScansOnJobId();
+
     void createProcessSchedule(String projectCode, String processName);
 
     List<ProcessTransaction> fetchAllProjectScansOnJobIdForProject(String projectCode);

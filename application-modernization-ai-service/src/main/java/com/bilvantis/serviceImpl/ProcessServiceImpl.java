@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,10 +21,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.MatchOperation;
-import org.springframework.data.mongodb.core.aggregation.GroupOperation;
+
 import static com.bilvantis.constants.CommonConstants.ERROR_EXCEPTION_LOG_PREFIX;
 import static com.bilvantis.constants.CommonConstants.ERROR_LOG_PREFIX;
 
@@ -62,10 +58,21 @@ public class ProcessServiceImpl implements ProcessService {
 
         processTransactionRepository.saveAll(processTransactionSet);
     }
+    @Override
+    public List<ProcessTransaction> fetchAllProjectScansOnJobId() {
+        List<ProcessTransaction> processTransactions = processTransactionRepository.findAll();
 
+        Map<String, ProcessTransaction> groupedByJobId = processTransactions.stream()
+                .collect(Collectors.toMap(
+                        ProcessTransaction::getJobId,
+                        transaction -> transaction,
+                        (existing, replacement) -> existing // Keep the existing record if jobId is duplicated
+                ));
+        return new ArrayList<>(groupedByJobId.values());
+    }
     @Override
     public List<ProcessTransaction> fetchAllProjectScansOnJobIdForProject(String projectCode) {
-        List<ProcessTransaction> processTransactions = processTransactionRepository.findAll(projectCode);
+        List<ProcessTransaction> processTransactions = processTransactionRepository.findAllByProjectCode(projectCode);
 
         Map<String, ProcessTransaction> groupedByJobId = processTransactions.stream()
                 .collect(Collectors.toMap(

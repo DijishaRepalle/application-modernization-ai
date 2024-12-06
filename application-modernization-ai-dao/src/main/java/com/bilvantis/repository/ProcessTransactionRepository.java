@@ -15,8 +15,10 @@ public interface ProcessTransactionRepository extends MongoRepository<ProcessTra
     @Query(value = "{}", sort = "{ 'timestamp' : -1 }")
     Optional<ProcessTransaction> findLatestRecord();
     @Query(value = "{}", sort = "{ 'timestamp' : -1 }")
-    List<ProcessTransaction> findAll(String projectCode);
+    List<ProcessTransaction> findAllByProjectCode(String projectCode);
 
+    @Query(value = "{}", sort = "{ 'timestamp' : -1 }")
+    List<ProcessTransaction> findAll();
     List<ProcessTransaction> findAllByProjectCodeAndJobId(String projectCode, String jobId, Sort sort);
 
 }
