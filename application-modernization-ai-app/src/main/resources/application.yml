@@ -16,6 +16,6 @@ spring:
   data:
     mongodb:
       uri: mongodb+srv://nishanthkothapalli:ICtX06mSnchwBmrT@cluster0.rrxmg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-      database: app_modernization
+      database: vector_db
 server:
   port: 8081

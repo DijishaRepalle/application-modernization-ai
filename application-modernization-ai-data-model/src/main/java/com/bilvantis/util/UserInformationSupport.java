@@ -27,6 +27,7 @@ public class UserInformationSupport {
         userInformation.setPhoneNumber(userInformationDTO.getPhoneNumber());
         userInformation.setOtp(userInformationDTO.getOtp());
         userInformation.setOtpGenerationTime(userInformationDTO.getOtpGenerationTime());
+        userInformation.setRole(userInformationDTO.getRole());
         return userInformation;
     }
 }
