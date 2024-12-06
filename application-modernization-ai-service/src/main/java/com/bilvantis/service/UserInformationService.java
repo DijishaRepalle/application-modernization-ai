@@ -7,8 +7,6 @@ import java.util.Optional;
 
 public interface UserInformationService<I extends UserInformation, J extends UserInformationDTO> {
 
-    UserInformationDTO createProject(UserInformationDTO userInformationDTO);
-
     Boolean getRoleBasedOnUserId(String userId);
 
     I createUser(UserInformation user);

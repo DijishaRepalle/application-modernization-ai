@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class ProjectInformationSupport {
@@ -28,7 +29,8 @@ public class ProjectInformationSupport {
         projectDTO.setProjectCode(project.getProjectCode());
         projectDTO.setToken(project.getToken());
         if (project.getTaggedUsers() != null) {
-            List<UserInformationDTO> userDTOList = project.getTaggedUsers().stream().map(UserInformationSupport::convertUserEntityTOUserDTO).toList();
+            List<UserInformationDTO> userDTOList = project.getTaggedUsers().stream()
+                    .filter(Objects::nonNull).map(UserInformationSupport::convertUserEntityTOUserDTO).toList();
             projectDTO.setTaggedUsers(userDTOList);
         }
         return projectDTO;
@@ -51,7 +53,8 @@ public class ProjectInformationSupport {
         project.setProjectCode(generatedProjectCode);
         project.setToken(projectDTO.getToken());
         if (projectDTO.getTaggedUsers() != null) {
-            List<UserInformation> userList = projectDTO.getTaggedUsers().stream().map(UserInformationSupport::convertUsersDTOTOUsersEntity).toList();
+            List<UserInformation> userList = projectDTO.getTaggedUsers().stream()
+                    .filter(Objects::nonNull).map(UserInformationSupport::convertUsersDTOTOUsersEntity).toList();
             project.setTaggedUsers(userList);
         }
         return project;

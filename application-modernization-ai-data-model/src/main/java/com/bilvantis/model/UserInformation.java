@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.UUID;
+
 @EqualsAndHashCode(callSuper = true)
 @Document(collection = "Users")
 @Data
@@ -14,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 public class UserInformation extends BaseDTO {
     @Id
-    private String id;
+    private UUID id;
     private String email;
     private String password;
     private String firstName;
