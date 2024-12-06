@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.bilvantis.util.ModernizationAppConstants.ROLE;
 import static com.bilvantis.util.ProjectInformationServiceConstants.EXCEPTION_ERROR_MESSAGE;
@@ -74,6 +75,7 @@ public class UserInformationServiceImpl implements UserInformationService<UserIn
             if (userInformationRepository.existsByEmail(user.getEmail())) {
                 throw new BadRequestException("Email is already in use: " + user.getEmail());
             }
+            user.setId(String.valueOf(UUID.randomUUID()));
             user.setCreatedDate(LocalDateTime.now());
             return userInformationRepository.save(user);
         } catch (DataAccessException e) {
