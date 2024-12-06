@@ -7,14 +7,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.UUID;
 
-@Document(collection = "ProcessSteps")
+@Document(collection = "process_steps")
 @Data
 public class ProcessSteps {
 
     @Id
-    private UUID stepId;
-    @DBRef
-    private Process processId;
+    private String stepId;
+    private String processId;
     private String stepName;
     private String description;
     private int stepSequence;

@@ -3,27 +3,40 @@ package com.bilvantis.serviceImpl;
 import com.bilvantis.constants.ProcessErrorEnum;
 import com.bilvantis.constants.Status;
 import com.bilvantis.exception.ResourceNotFoundException;
+import com.bilvantis.model.Process;
 import com.bilvantis.model.ProcessSteps;
 import com.bilvantis.model.ProcessTransaction;
+import com.bilvantis.repository.ProcessRepository;
 import com.bilvantis.repository.ProcessStepsRepository;
 import com.bilvantis.repository.ProcessTransactionRepository;
 import com.bilvantis.service.ProcessService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
+import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import static com.bilvantis.constants.CommonConstants.ERROR_EXCEPTION_LOG_PREFIX;
 import static com.bilvantis.constants.CommonConstants.ERROR_LOG_PREFIX;
 
 @Service
 @Slf4j
 public class ProcessServiceImpl implements ProcessService {
+
+    @Autowired
+    private ProcessRepository processRepository;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @Autowired
     private ProcessStepsRepository processStepsRepository;
@@ -33,9 +46,9 @@ public class ProcessServiceImpl implements ProcessService {
 
     @Override
     @Transactional
-    public void createProcess(String projectCode, String processName) {
+    public void createProcessSchedule(String projectCode, String processName) {
 
-        Set<ProcessSteps> processSteps = processStepsRepository.findByProcessId_processName(processName);
+        List<ProcessSteps> processSteps = processStepsRepository.findByProcessName(processName);
 
         if (CollectionUtils.isEmpty(processSteps)) {
             log.error(ERROR_LOG_PREFIX, ProcessErrorEnum.PROCESS_STEPS_NOT_FOUND.getErrorId()
@@ -44,15 +57,46 @@ public class ProcessServiceImpl implements ProcessService {
                     ProcessErrorEnum.PROCESS_STEPS_NOT_FOUND.getErrorId()
                     .concat(ProcessErrorEnum.PROCESS_STEPS_NOT_FOUND.getMessage())));
         }
-        Set<ProcessTransaction> processTransactionSet = buildProcessTransactions(processSteps, projectCode);
+        List<ProcessTransaction> processTransactionSet = buildProcessTransactions(processSteps, projectCode);
 
         processTransactionRepository.saveAll(processTransactionSet);
     }
 
-    private Set<ProcessTransaction> buildProcessTransactions(Set<ProcessSteps> processSteps, String projectCode) {
-        Set<ProcessTransaction> processTransactionSet = new HashSet<>();
+    @Override
+    public List<ProcessTransaction> fetchAllProjectScansOnJobIdForProject(String projectCode) {
+        MatchOperation matchOperation = Aggregation.match(Criteria.where("projectCode").is(projectCode));
+        GroupOperation groupOperation = Aggregation.group("jobId", "projectCode")
+                .first(Aggregation.ROOT).as("uniqueRecord");
+
+        Aggregation aggregation = Aggregation.newAggregation(matchOperation, groupOperation);
+        AggregationResults<ProcessTransaction> results = mongoTemplate.aggregate(aggregation, "process_transaction", ProcessTransaction.class);
+
+        return results.getMappedResults();
+    }
+
+    @Override
+    public List<ProcessTransaction> fetchProcessTransactionsForJobId(String projectCode, String jobId) {
+
+        return processTransactionRepository.findAllByProjectCodeAndJobId(projectCode, jobId, Sort.by(Sort.Direction.ASC, "stepId.stepSequence"));
+    }
+
+    @Override
+    public void createProcess(Process process) {
+        process.setProcessId(UUID.randomUUID().toString());
+        processRepository.save(process);
+    }
+
+    @Override
+    public void createProcessSteps(List<ProcessSteps> processSteps) {
+        processSteps.forEach(processStep -> processStep.setStepId(UUID.randomUUID().toString()));
+        processStepsRepository.saveAll(processSteps);
+    }
+
+    private List<ProcessTransaction> buildProcessTransactions(List<ProcessSteps> processSteps, String projectCode) {
+        List<ProcessTransaction> processTransactionSet = new ArrayList<>();
         processSteps.forEach(processStep -> {
             ProcessTransaction processTransaction = new ProcessTransaction();
+            processTransaction.setProcessTransactionId(UUID.randomUUID().toString());
             processTransaction.setJobId(generateJobId());
             if (processStep.getStepSequence() == 1) {
                 processTransaction.setStatus(Status.TO_DO.getStatus());
@@ -60,13 +104,15 @@ public class ProcessServiceImpl implements ProcessService {
                 processTransaction.setStatus(Status.OPEN.getStatus());
             }
             processTransaction.setTrial(0);
+            processTransaction.setStepName(processStep.getStepName());
             processTransaction.setProjectCode(projectCode);
-            processTransaction.setStepId(processStep);
+            processTransaction.setStepId(processStep.getStepId());
             processTransaction.setIsActive(Boolean.TRUE);
             processTransactionSet.add(processTransaction);
         });
         return processTransactionSet;
     }
+
     private String generateJobId() {
         StringBuilder jobId = new StringBuilder("JOB");
         processTransactionRepository.findLatestRecord().ifPresentOrElse(
@@ -79,7 +125,6 @@ public class ProcessServiceImpl implements ProcessService {
                     jobId.append("001");
                 }
         );
-
 
         return jobId.toString();
     }

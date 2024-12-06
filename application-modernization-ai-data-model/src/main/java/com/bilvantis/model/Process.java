@@ -7,12 +7,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.UUID;
 
-@Document(collection = "Process")
+@Document(collection = "process")
 @Data
 public class Process {
 
     @Id
-    private UUID processId;
+    private String processId;
     private String processName;
     private String description;
 }

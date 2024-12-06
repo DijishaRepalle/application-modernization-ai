@@ -1,6 +1,20 @@
 package com.bilvantis.service;
 
+import com.bilvantis.model.Process;
+import com.bilvantis.model.ProcessSteps;
+import com.bilvantis.model.ProcessTransaction;
+
+import java.util.List;
+
 public interface ProcessService {
 
-    public void createProcess(String projectCode, String processName);
+    void createProcessSchedule(String projectCode, String processName);
+
+    List<ProcessTransaction> fetchAllProjectScansOnJobIdForProject(String projectCode);
+
+    List<ProcessTransaction> fetchProcessTransactionsForJobId(String projectCode, String jobId);
+
+    void createProcess(Process process);
+
+    void createProcessSteps(List<ProcessSteps> processSteps);
 }

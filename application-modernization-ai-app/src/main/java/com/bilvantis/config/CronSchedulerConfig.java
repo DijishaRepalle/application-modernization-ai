@@ -10,11 +10,11 @@ import java.nio.file.Path;
 
 @Component
 @Slf4j
-public class CronSchedularConfig {
+public class CronSchedulerConfig {
 
     private static final String CLONE_DIRECTORY_BASE_PATH = "src/main/clone/";
 
-    @Scheduled(cron = "0 * * * * *")
+    //@Scheduled(cron = "0 * * * * *")
     public void cleanCloneDirectory() {
         try {
             File baseDir = new File(CLONE_DIRECTORY_BASE_PATH);

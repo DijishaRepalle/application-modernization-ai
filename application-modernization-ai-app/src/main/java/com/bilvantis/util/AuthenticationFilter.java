@@ -41,7 +41,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             try {
                 String authHeader = request.getHeader(AUTHORIZATION);
                 String token = null;
-                if (StringUtils.isNotBlank(authHeader)) {
+                /*if (StringUtils.isNotBlank(authHeader)) {
                     if (authHeader.startsWith(BEARER)) {
                         token = authHeader.substring(BEARER.length());
                         Boolean authorizedUser = jwtTokenService.validateToken(token);
@@ -59,7 +59,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                     log.error(TOKEN_NOT_PASSED);
                     response.sendError(HttpStatus.UNAUTHORIZED.value(), TOKEN_NOT_PASSED);
                     return;
-                }
+                }*/
             } catch (ExpiredJwtException ex) {
                 log.error(TOKEN_EXPIRED);
                 response.sendError(HttpStatus.UNAUTHORIZED.value(), TOKEN_EXPIRED);
