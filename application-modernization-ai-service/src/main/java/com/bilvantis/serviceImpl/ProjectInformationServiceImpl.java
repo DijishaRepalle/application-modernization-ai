@@ -5,15 +5,19 @@ import com.bilvantis.exception.DataNotFoundException;
 import com.bilvantis.exception.ProjectImplementationSaveFailedException;
 import com.bilvantis.model.ProjectInformation;
 import com.bilvantis.model.ProjectInformationDTO;
+import com.bilvantis.model.UserInformation;
 import com.bilvantis.repository.ProjectInformationRepository;
+import com.bilvantis.repository.UserInformationRepository;
 import com.bilvantis.service.ProjectInformationService;
 import com.bilvantis.util.ProjectInformationSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,9 +30,12 @@ import static com.bilvantis.util.ProjectInformationSupport.convertProjectEntityT
 @Slf4j
 public class ProjectInformationServiceImpl implements ProjectInformationService<ProjectInformation, ProjectInformationDTO> {
     private final ProjectInformationRepository projectInformationRepository;
+    private final UserInformationRepository userInformationRepository;
 
-    public ProjectInformationServiceImpl(ProjectInformationRepository projectInformationRepository) {
+   @Autowired
+   public ProjectInformationServiceImpl(ProjectInformationRepository projectInformationRepository, UserInformationRepository userInformationRepository) {
         this.projectInformationRepository = projectInformationRepository;
+        this.userInformationRepository = userInformationRepository;
     }
 
 
@@ -94,6 +101,33 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
         } catch (DataAccessException e) {
             log.error(EXCEPTION_ERROR_MESSAGE, this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName());
             throw new ApplicationException(e.getMessage());
+        }
+    }
+
+
+    @Override
+    public ProjectInformationDTO addUsersToProject(String projectCode, List<String> userIds) {
+        try {
+            // Find the project by project code
+            ProjectInformation project = projectInformationRepository.findByProjectCode(projectCode)
+                    .orElseThrow(() -> new DataNotFoundException(PROJECT_DETAILS_NOT_FOUND));
+
+            // Fetch the users by their IDs
+            List<UserInformation> usersToAdd = userInformationRepository.findAllById(userIds);
+
+            // Add the users to the project's tagged users list
+            if (project.getTaggedUsers() == null) {
+                project.setTaggedUsers(new ArrayList<>());
+            }
+            project.getTaggedUsers().addAll(usersToAdd);
+
+            // Save the updated project
+            ProjectInformation updatedProject = projectInformationRepository.save(project);
+
+            return convertProjectEntityToProjectDTO(updatedProject);
+        } catch (DataAccessException e) {
+            log.error(EXCEPTION_ERROR_MESSAGE, this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName());
+            throw new ProjectImplementationSaveFailedException(e.getMessage());
         }
     }
 }

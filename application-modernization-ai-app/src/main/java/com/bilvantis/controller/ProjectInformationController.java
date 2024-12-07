@@ -43,4 +43,10 @@ public class ProjectInformationController {
         return new ResponseEntity<>(updateData, HttpStatus.OK);
     }
 
+    @PutMapping("/{projectCode}/add-users")
+    public ResponseEntity<ProjectInformationDTO> addUsersToProject(@PathVariable String projectCode, @RequestBody List<String> userIds) {
+        ProjectInformationDTO updatedProject = projectInformationService.addUsersToProject(projectCode, userIds);
+        return new ResponseEntity<>(updatedProject, HttpStatus.OK);
+    }
+
 }
