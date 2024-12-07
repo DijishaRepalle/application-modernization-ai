@@ -44,7 +44,7 @@ public class LoginController {
     @GetMapping("/auth")
     public ResponseEntity<UserResponseDTO> authLoginDetails(@NotBlank @RequestParam String phoneNumber, @NotBlank @RequestParam String otp) {
         UserInformation userInformation = loginService.verifyWorkerLogin(phoneNumber, otp);
-        HttpHeaders headers = loginService.setHeader(String.valueOf(userInformation.getId()));
+        HttpHeaders headers = loginService.setHeader((userInformation.getId()));
         return new ResponseEntity<>(UserRequestResponseBuilder.buildResponseDTO(userInformation, null, null, null, null, ModernizationAppConstants.SUCCESS), headers, HttpStatus.OK);
     }
 
