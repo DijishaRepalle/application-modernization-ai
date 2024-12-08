@@ -3,6 +3,7 @@ package com.bilvantis.service;
 import com.bilvantis.model.UserInformation;
 import com.bilvantis.model.UserInformationDTO;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserInformationService<I extends UserInformation, J extends UserInformationDTO> {
@@ -16,5 +17,8 @@ public interface UserInformationService<I extends UserInformation, J extends Use
     I editUser(String email, UserInformation updatedUserDetails);
 
     void deleteUser(String email);
+
+    List<J> getAllUsersInformation();
+
 
 }

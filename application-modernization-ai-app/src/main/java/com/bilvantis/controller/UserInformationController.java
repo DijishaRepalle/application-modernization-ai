@@ -1,6 +1,7 @@
 package com.bilvantis.controller;
 
 import com.bilvantis.model.UserInformation;
+import com.bilvantis.model.UserInformationDTO;
 import com.bilvantis.model.UserResponseDTO;
 import com.bilvantis.service.UserInformationService;
 import com.bilvantis.util.UserRequestResponseBuilder;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -100,6 +102,19 @@ public class UserInformationController {
     public ResponseEntity<Void> deleteUser(@RequestParam String email) {
         userInformationService.deleteUser(email);
         return ResponseEntity.noContent().build();
+    }
+
+
+    /**
+     * get api to retrive the list of users in db
+     *
+     * @return a list of users
+     */
+
+    @GetMapping("/users-list")
+    public ResponseEntity<List<UserInformationDTO>> getAllUsers() {
+        List<UserInformationDTO> getAllUsers = userInformationService.getAllUsersInformation();
+        return new ResponseEntity<>(getAllUsers, HttpStatus.OK);
     }
 
 }

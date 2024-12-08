@@ -2,22 +2,29 @@ package com.bilvantis.serviceImpl;
 
 import com.bilvantis.exception.ApplicationException;
 import com.bilvantis.exception.BadRequestException;
+import com.bilvantis.exception.DataNotFoundException;
 import com.bilvantis.model.UserInformation;
 import com.bilvantis.model.UserInformationDTO;
 import com.bilvantis.repository.UserInformationRepository;
 import com.bilvantis.service.UserInformationService;
 import com.bilvantis.util.AppModernizationProperties;
+import com.bilvantis.util.UserInformationSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.bilvantis.util.ModernizationAppConstants.ROLE;
+import static com.bilvantis.util.ProjectInformationServiceConstants.EXCEPTION_ERROR_MESSAGE;
+import static com.bilvantis.util.UserInformationServiceImplConstants.USER_LIST_NOT_FOUND;
 
 @Service
 @Slf4j
@@ -115,5 +122,24 @@ public class UserInformationServiceImpl implements UserInformationService<UserIn
         userInformationRepository.delete(email);
     }
 
+
+    /**
+     * to get the list of users present in the system
+      * @return a list of users
+     */
+    @Override
+    public List<UserInformationDTO> getAllUsersInformation() {
+        try {
+            List<UserInformation> listOfProjects = userInformationRepository.findAll();
+            if (CollectionUtils.isEmpty(listOfProjects)) {
+                throw new DataNotFoundException(USER_LIST_NOT_FOUND);
+            }
+            return listOfProjects.stream().map(UserInformationSupport::convertUserEntityTOUserDTO).collect(Collectors.toList());
+
+        } catch (DataAccessException e) {
+            log.error(EXCEPTION_ERROR_MESSAGE, this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName());
+            throw new ApplicationException(e.getMessage());
+        }
+    }
 
 }
