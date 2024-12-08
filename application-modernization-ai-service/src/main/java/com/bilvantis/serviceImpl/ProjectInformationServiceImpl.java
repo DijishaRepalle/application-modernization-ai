@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import static com.bilvantis.util.ProjectInformationServiceConstants.*;
 import static com.bilvantis.util.ProjectInformationSupport.convertProjectDTOToProjectEntity;
 import static com.bilvantis.util.ProjectInformationSupport.convertProjectEntityToProjectDTO;
+import static com.bilvantis.util.UserInformationServiceImplConstants.USER_DETAILS_NOT_FOUND;
 
 @Service
 @Slf4j
@@ -111,9 +112,16 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
             // Find the project by project code
             ProjectInformation project = projectInformationRepository.findByProjectCode(projectCode)
                     .orElseThrow(() -> new DataNotFoundException(PROJECT_DETAILS_NOT_FOUND));
-
             // Fetch the users by their IDs
             List<UserInformation> usersToAdd = userInformationRepository.findAllById(userIds);
+            // Check if any user IDs are invalid
+            List<String> invalidUserIds = userIds.stream()
+                    .filter(id -> usersToAdd.stream().noneMatch(user -> user.getId().equals(id)))
+                    .toList();
+
+            if (!invalidUserIds.isEmpty()) {
+                throw new DataNotFoundException(USER_DETAILS_NOT_FOUND);
+            }
 
             // Add the users to the project's tagged users list
             if (project.getTaggedUsers() == null) {
