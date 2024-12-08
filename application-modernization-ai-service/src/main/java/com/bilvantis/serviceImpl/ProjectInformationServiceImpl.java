@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import static com.bilvantis.util.ProjectInformationServiceConstants.*;
 import static com.bilvantis.util.ProjectInformationSupport.convertProjectDTOToProjectEntity;
 import static com.bilvantis.util.ProjectInformationSupport.convertProjectEntityToProjectDTO;
+import static com.bilvantis.util.UserInformationServiceImplConstants.USER_ALREADY_EXIST;
 import static com.bilvantis.util.UserInformationServiceImplConstants.USER_DETAILS_NOT_FOUND;
 
 @Service
@@ -122,7 +123,11 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
             if (!invalidUserIds.isEmpty()) {
                 throw new DataNotFoundException(USER_DETAILS_NOT_FOUND);
             }
-
+            for (UserInformation user : usersToAdd) {
+                if (project.getTaggedUsers() != null && project.getTaggedUsers().contains(user)) {
+                    throw new ApplicationException(USER_ALREADY_EXIST);
+                }
+            }
             // Add the users to the project's tagged users list
             if (project.getTaggedUsers() == null) {
                 project.setTaggedUsers(new ArrayList<>());
