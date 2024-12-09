@@ -115,14 +115,7 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
                     .orElseThrow(() -> new DataNotFoundException(PROJECT_DETAILS_NOT_FOUND));
             // Fetch the users by their IDs
             List<UserInformation> usersToAdd = userInformationRepository.findAllById(userIds);
-            // Check if any user IDs are invalid
-            List<String> invalidUserIds = userIds.stream()
-                    .filter(id -> usersToAdd.stream().noneMatch(user -> user.getId().equals(id)))
-                    .toList();
-
-            if (!invalidUserIds.isEmpty()) {
-                throw new DataNotFoundException(USER_DETAILS_NOT_FOUND);
-            }
+            //check if the user is already tagged
             for (UserInformation user : usersToAdd) {
                 if (project.getTaggedUsers() != null && project.getTaggedUsers().contains(user)) {
                     throw new ApplicationException(USER_ALREADY_EXIST);
