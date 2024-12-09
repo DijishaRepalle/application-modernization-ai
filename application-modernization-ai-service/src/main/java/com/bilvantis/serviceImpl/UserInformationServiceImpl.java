@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.bilvantis.util.ModernizationAppConstants.ROLE;
-import static com.bilvantis.util.ProjectInformationServiceConstants.EXCEPTION_ERROR_MESSAGE;
+import static com.bilvantis.util.ProjectInformationServiceImplConstants.EXCEPTION_ERROR_MESSAGE;
 import static com.bilvantis.util.UserInformationServiceImplConstants.USER_LIST_NOT_FOUND;
 
 @Service
