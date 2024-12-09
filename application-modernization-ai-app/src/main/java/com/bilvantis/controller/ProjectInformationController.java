@@ -1,6 +1,7 @@
 package com.bilvantis.controller;
 
 import com.bilvantis.model.ProjectInformationDTO;
+import com.bilvantis.model.UserInformationDTO;
 import com.bilvantis.service.ProjectInformationService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -44,9 +45,8 @@ public class ProjectInformationController {
     }
 
     @PutMapping("/{projectCode}/add-users")
-    public ResponseEntity<ProjectInformationDTO> addUsersToProject(@PathVariable String projectCode, @RequestBody List<String> userIds) {
+    public ResponseEntity<ProjectInformationDTO> addUsersToProject(@PathVariable String projectCode, @RequestBody List<UserInformationDTO> userIds) {
         ProjectInformationDTO updatedProject = projectInformationService.addUsersToProject(projectCode, userIds);
         return new ResponseEntity<>(updatedProject, HttpStatus.OK);
     }
-
 }
