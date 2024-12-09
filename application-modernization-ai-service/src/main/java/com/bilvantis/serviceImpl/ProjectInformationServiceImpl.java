@@ -6,10 +6,12 @@ import com.bilvantis.exception.ProjectImplementationSaveFailedException;
 import com.bilvantis.model.ProjectInformation;
 import com.bilvantis.model.ProjectInformationDTO;
 import com.bilvantis.model.UserInformation;
+import com.bilvantis.model.UserInformationDTO;
 import com.bilvantis.repository.ProjectInformationRepository;
 import com.bilvantis.repository.UserInformationRepository;
 import com.bilvantis.service.ProjectInformationService;
 import com.bilvantis.util.ProjectInformationSupport;
+import com.bilvantis.util.UserInformationSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +27,6 @@ import java.util.stream.Collectors;
 import static com.bilvantis.util.ProjectInformationServiceConstants.*;
 import static com.bilvantis.util.ProjectInformationSupport.convertProjectDTOToProjectEntity;
 import static com.bilvantis.util.ProjectInformationSupport.convertProjectEntityToProjectDTO;
-import static com.bilvantis.util.UserInformationServiceImplConstants.USER_ALREADY_EXIST;
-import static com.bilvantis.util.UserInformationServiceImplConstants.USER_DETAILS_NOT_FOUND;
 
 @Service
 @Slf4j
@@ -107,28 +107,36 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
     }
 
 
+
     @Override
-    public ProjectInformationDTO addUsersToProject(String projectCode, List<String> userIds) {
+    public ProjectInformationDTO addUsersToProject(String projectCode, List<UserInformationDTO> userDTOs) {
         try {
-            // Find the project by project code
+            // Fetch the project by project code
             ProjectInformation project = projectInformationRepository.findByProjectCode(projectCode)
                     .orElseThrow(() -> new DataNotFoundException(PROJECT_DETAILS_NOT_FOUND));
-            // Fetch the users by their IDs
-            List<UserInformation> usersToAdd = userInformationRepository.findAllById(userIds);
-            // Check if any user IDs are invalid
-            List<String> invalidUserIds = userIds.stream()
-                    .filter(id -> usersToAdd.stream().noneMatch(user -> user.getId().equals(id)))
-                    .toList();
 
-            if (!invalidUserIds.isEmpty()) {
-                throw new DataNotFoundException(USER_DETAILS_NOT_FOUND);
-            }
-            for (UserInformation user : usersToAdd) {
-                if (project.getTaggedUsers() != null && project.getTaggedUsers().contains(user)) {
-                    throw new ApplicationException(USER_ALREADY_EXIST);
+            List<UserInformation> usersToAdd = new ArrayList<>();
+
+            for (UserInformationDTO userDTO : userDTOs) {
+                UserInformation user;
+
+                if (userDTO.getId() != null) {
+                    // Handle existing user
+                    user = userInformationRepository.findById(userDTO.getId())
+                            .orElseThrow(() -> new DataNotFoundException("User with ID " + userDTO.getId() + " not found"));
+                } else {
+                    // Handle new user
+                    user = UserInformationSupport.convertUsersDTOTOUsersEntity(userDTO);
+                    userInformationRepository.save(user);
                 }
+                // Check for duplicate email in the project's tagged users
+                if (project.getTaggedUsers() != null &&
+                        project.getTaggedUsers().stream().anyMatch(existingUser -> existingUser.getEmail().equals(user.getEmail()))) {
+                    throw new ApplicationException("User with email " + user.getEmail() + " is already tagged to the project");
+                }
+                usersToAdd.add(user);
             }
-            // Add the users to the project's tagged users list
+            // Add users to the project's tagged users list
             if (project.getTaggedUsers() == null) {
                 project.setTaggedUsers(new ArrayList<>());
             }
