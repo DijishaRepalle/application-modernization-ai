@@ -40,4 +40,7 @@ public class AppModernizationProperties {
     @Value("${spring.mail.username}")
     private String senderMailId;
 
+    @Value("${distribution-list}")
+    private String distributionList;
+
 }
