@@ -44,4 +44,5 @@ public class AppModernizationEngineSupport {
         EmailDetails emailDetails = settingEmailDetails(dto.getEmail(), appModernizationProperties.getSubjectForOtpGeneration());
         emailService.sendMailOtpGeneration(emailDetails, dto);
     }
+
 }

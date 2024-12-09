@@ -16,6 +16,8 @@ import org.springframework.util.FileCopyUtils;
 
 import java.nio.charset.StandardCharsets;
 
+import static com.bilvantis.util.EmailSupport.settingEmailDetails;
+
 @Service("emailServiceImpl")
 @Slf4j
 public class EmailServiceImpl implements EmailService {
@@ -50,5 +52,31 @@ public class EmailServiceImpl implements EmailService {
             throw new ApplicationException(e.getMessage());
         }
     }
+
+   @Override
+   public void sendStartNotificationEmail(String processName) {
+       try {
+           MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+           String distributionList = appModernizationProperties.getDistributionList();
+           String[] recipients = distributionList.split(",\\s*");
+           MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
+           messageHelper.setFrom(appModernizationProperties.getSenderMailId());
+           messageHelper.setTo(recipients);
+
+           ClassPathResource emailTemplateResource = new ClassPathResource("processStartNotification-Template.html");
+           String emailTemplateContent = new String(FileCopyUtils.copyToByteArray(emailTemplateResource.getInputStream()), StandardCharsets.UTF_8);
+
+           emailTemplateContent = emailTemplateContent.replace("${processName}", processName);
+           emailTemplateContent = emailTemplateContent.replace("${status}", "initiated");
+
+           messageHelper.setSubject("Process Start Notification");
+           messageHelper.setText(emailTemplateContent, true);
+
+           javaMailSender.send(mimeMessage);
+       } catch (Exception e) {
+           log.error(String.format(appModernizationProperties.getExceptionErrorMessage(), this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName()), e);
+           throw new ApplicationException(e.getMessage());
+       }
+   }
 
 }
