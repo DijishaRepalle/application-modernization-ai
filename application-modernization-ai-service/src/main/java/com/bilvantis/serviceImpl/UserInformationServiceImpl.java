@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static com.bilvantis.util.ModernizationAppConstants.ROLE;
 import static com.bilvantis.util.ProjectInformationServiceConstants.EXCEPTION_ERROR_MESSAGE;
+import static com.bilvantis.util.UserInformationServiceImplConstants.EMAIL_ALREADY_EXISTS;
 import static com.bilvantis.util.UserInformationServiceImplConstants.USER_LIST_NOT_FOUND;
 
 @Service
@@ -60,7 +61,7 @@ public class UserInformationServiceImpl implements UserInformationService<UserIn
     public UserInformation createUser(UserInformation user) {
         try {
             if (userInformationRepository.existsByEmail(user.getEmail())) {
-                throw new BadRequestException("Email is already in use: " + user.getEmail());
+                throw new BadRequestException(EMAIL_ALREADY_EXISTS);
             }
             user.setId(String.valueOf(UUID.randomUUID()));
             user.setCreatedDate(LocalDateTime.now());

@@ -16,7 +16,6 @@ import org.springframework.util.FileCopyUtils;
 
 import java.nio.charset.StandardCharsets;
 
-import static com.bilvantis.util.EmailSupport.settingEmailDetails;
 
 @Service("emailServiceImpl")
 @Slf4j
