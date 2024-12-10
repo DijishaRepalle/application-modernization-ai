@@ -44,9 +44,29 @@ public class ProjectInformationController {
         return new ResponseEntity<>(updateData, HttpStatus.OK);
     }
 
+    /**
+     * add users to particular project based on project code
+     *
+     * @param projectCode
+     * @param userIds
+     * @return list of users for project
+     */
     @PutMapping("/{projectCode}/add-users")
     public ResponseEntity<ProjectInformationDTO> addUsersToProject(@PathVariable String projectCode, @RequestBody List<UserInformationDTO> userIds) {
         ProjectInformationDTO updatedProject = projectInformationService.addUsersToProject(projectCode, userIds);
+        return new ResponseEntity<>(updatedProject, HttpStatus.OK);
+    }
+
+    /**
+     * Deletes the list of users tagged to particular project
+     *
+     * @param projectCode
+     * @param userIds
+     * @return deleted users
+     */
+    @DeleteMapping("/{projectCode}/delete-tagged-users")
+    public ResponseEntity<ProjectInformationDTO> deleteTaggedUsers(@PathVariable String projectCode, @RequestBody List<String> userIds) {
+        ProjectInformationDTO updatedProject = projectInformationService.removeTaggedUsersFromProject(projectCode, userIds);
         return new ResponseEntity<>(updatedProject, HttpStatus.OK);
     }
 }

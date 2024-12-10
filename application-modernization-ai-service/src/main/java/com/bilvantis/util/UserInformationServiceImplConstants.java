@@ -7,4 +7,11 @@ public class UserInformationServiceImplConstants {
 
     public static final String EMAIL_ALREADY_EXISTS = "Email already exists";
 
+
+    public static final String USER_ID_NOT_FOUND="User id not found in the system";
+    public static final String TAGGED_USERS_NOT_FOUND="No users are tagged to this project";
+
+    public static final String USER_ID_NOT_TAGGED_FOR_PROJECT="User with ID %s is not tagged to the project";
+
+    public static final String USER_TAGGED_TO_PROJECT="User is already tagged to the project";
 }
