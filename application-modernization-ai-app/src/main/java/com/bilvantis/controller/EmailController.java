@@ -1,6 +1,9 @@
 package com.bilvantis.controller;
 
+import com.bilvantis.model.UserResponseDTO;
 import com.bilvantis.service.EmailService;
+import com.bilvantis.util.UserRequestResponseBuilder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,12 +21,8 @@ public class EmailController {
 
 
     @PostMapping("/sendStartNotification")
-    public String sendStartNotification(@RequestBody String processName) {
-        try {
-            emailService.sendStartNotificationEmail(processName);
-            return "Start notification email sent successfully.";
-        } catch (Exception e) {
-            return "Error sending start notification email: " + e.getMessage();
-        }
+    public ResponseEntity<UserResponseDTO> sendStartNotification(@RequestBody String processName) {
+        emailService.sendStartNotificationEmail(processName);
+        return ResponseEntity.ok(UserRequestResponseBuilder.buildResponseDTO(null, null, "Start notification email sent successfully."));
     }
 }
