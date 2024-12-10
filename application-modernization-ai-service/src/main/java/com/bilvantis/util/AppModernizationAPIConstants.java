@@ -10,9 +10,13 @@ public class AppModernizationAPIConstants {
 
     public static final Integer ONE_MINUTE_IN_MILLI_SECONDS = 60 * 1000;
 
-    public static final String PHONE_NUMBER_NOT_FOUND = "Please enter phone number";
+    public static final String PHONE_NUMBER_NOT_FOUND = "Phone number cannot be null or empty";
 
-    public static final String OTP_NOT_FOUND = "Please enter the OTP";
+    public static final String OTP_NOT_FOUND = "OTP cannot be null or empty";
     public static final String TOKEN = "token";
+    public static final String SECRET = "4027d080f9a3954189ebca5ddbbfdfc9cb824314c0d6c910eff8bec1c689eabc";
+    public static final String ROLE = "ADMIN";
+
+    public static final String SUCCESS = "SUCCESS";
 
 }

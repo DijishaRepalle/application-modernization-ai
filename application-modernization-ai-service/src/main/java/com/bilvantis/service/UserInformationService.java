@@ -14,7 +14,7 @@ public interface UserInformationService<I extends UserInformation, J extends Use
 
     Optional<I> fetchUser(String email);
 
-    I editUser(String email, UserInformation updatedUserDetails);
+    I editUser(String email, I updatedUserDetails);
 
     void deleteUser(String email);
 

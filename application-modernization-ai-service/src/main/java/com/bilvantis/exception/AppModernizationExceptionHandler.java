@@ -5,7 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import static com.bilvantis.util.ModernizationAppConstants.GLOBAL_FIELD_ID;
+import static com.bilvantis.util.AppModernizationAPIConstants.GLOBAL_FIELD_ID;
+
 
 @ControllerAdvice
 public class AppModernizationExceptionHandler {

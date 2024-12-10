@@ -3,7 +3,7 @@ package com.bilvantis.controller;
 import com.bilvantis.model.UserInformation;
 import com.bilvantis.model.UserResponseDTO;
 import com.bilvantis.service.LoginService;
-import com.bilvantis.util.ModernizationAppConstants;
+import com.bilvantis.util.AppModernizationAPIConstants;
 import com.bilvantis.util.UserRequestResponseBuilder;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -31,7 +31,8 @@ public class LoginController {
      */
     @PostMapping("/one-time-password")
     public ResponseEntity<UserResponseDTO> sendWorkerOneTimePassword(@NotNull @RequestParam String phoneNumber) {
-        return new ResponseEntity<>(UserRequestResponseBuilder.buildResponseDTO(loginService.sendOneTimePasswordMail(phoneNumber), null, null, null, null, ModernizationAppConstants.SUCCESS), HttpStatus.OK);
+        return new ResponseEntity<>(UserRequestResponseBuilder.buildResponseDTO(loginService.sendOneTimePasswordMail(phoneNumber), null, null, null, null, AppModernizationAPIConstants.SUCCESS), HttpStatus.OK);
+
     }
 
     /**
@@ -45,7 +46,7 @@ public class LoginController {
     public ResponseEntity<UserResponseDTO> authLoginDetails(@NotBlank @RequestParam String phoneNumber, @NotBlank @RequestParam String otp) {
         UserInformation userInformation = loginService.verifyWorkerLogin(phoneNumber, otp);
         HttpHeaders headers = loginService.setHeader((userInformation.getId()));
-        return new ResponseEntity<>(UserRequestResponseBuilder.buildResponseDTO(userInformation, null, null, null, null, ModernizationAppConstants.SUCCESS), headers, HttpStatus.OK);
+        return new ResponseEntity<>(UserRequestResponseBuilder.buildResponseDTO(userInformation, null, null, null, null, AppModernizationAPIConstants.SUCCESS), headers, HttpStatus.OK);
     }
 
 }
