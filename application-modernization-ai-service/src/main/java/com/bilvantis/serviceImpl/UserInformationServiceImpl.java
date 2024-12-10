@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static com.bilvantis.util.ModernizationAppConstants.ROLE;
 import static com.bilvantis.util.ProjectInformationServiceImplConstants.EXCEPTION_ERROR_MESSAGE;
+import static com.bilvantis.util.UserInformationServiceImplConstants.EMAIL_ALREADY_EXISTS;
 import static com.bilvantis.util.UserInformationServiceImplConstants.USER_LIST_NOT_FOUND;
 
 @Service
