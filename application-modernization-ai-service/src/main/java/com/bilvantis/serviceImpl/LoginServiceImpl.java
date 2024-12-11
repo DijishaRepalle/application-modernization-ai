@@ -95,7 +95,7 @@ public class LoginServiceImpl implements LoginService {
             throw new ApplicationException(appModernizationProperties.getWorkersNotAvailable());
 
         } catch (DataAccessException e) {
-            log.error(String.format(appModernizationProperties.getExceptionErrorMessage(), this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName()), e);
+            log.error(String.format(appModernizationProperties.getExceptionErrorMessage(), this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName()));
             throw new ApplicationException(e.getMessage());
         }
     }
