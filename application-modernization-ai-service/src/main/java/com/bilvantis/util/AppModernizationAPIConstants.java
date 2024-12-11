@@ -34,5 +34,8 @@ public class AppModernizationAPIConstants {
     public static final String HYPHEN = "-";
 
     public static final String ERROR_OCCURRED_WHILE_CLONING_PROJECT = "An error occurred while cloning the repository";
+    public static final String GIT = "git";
+    public static final String CLONE = "clone";
+    public static final String REPO_CLONE_SUCCESS = "Repository cloned successfully";
 
 }

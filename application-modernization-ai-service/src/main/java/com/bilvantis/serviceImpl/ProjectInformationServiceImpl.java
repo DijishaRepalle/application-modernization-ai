@@ -21,7 +21,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.bilvantis.util.ProjectInformationServiceImplConstants.*;
@@ -93,12 +92,11 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
             if (ObjectUtils.isEmpty(projectId)) {
                 throw new DataNotFoundException(PROJECT_ID_NOT_FOUND);
             }
-            Optional<ProjectInformation> projectInformation = projectInformationRepository.findById(projectId);
-            if (projectInformation.isPresent()) {
-                projectInformationRepository.deleteById(projectId);
-            } else {
-                throw new DataNotFoundException(PROJECT_ID_NOT_FOUND);
-            }
+            ProjectInformation projectInformation = projectInformationRepository
+                    .findById(projectId).orElseThrow(() -> new DataNotFoundException(PROJECT_ID_NOT_FOUND));
+
+            projectInformationRepository.deleteById(projectId);
+
         } catch (DataAccessException e) {
             log.error(EXCEPTION_ERROR_MESSAGE, this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName());
             throw new ApplicationException(e.getMessage());
@@ -115,11 +113,8 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
     @Override
     public ProjectInformationDTO updateProjectByProjectId(String projectId, ProjectInformationDTO projectInfoDTO) {
         try {
-            Optional<ProjectInformation> optionalProject = projectInformationRepository.findById(projectId);
-            if (!optionalProject.isPresent()) {
-                throw new DataNotFoundException(PROJECT_DETAILS_NOT_FOUND);
-            }
-            ProjectInformation projectInformation = optionalProject.get();
+            ProjectInformation projectInformation = projectInformationRepository.findById(projectId)
+                    .orElseThrow(() -> new DataNotFoundException(PROJECT_DETAILS_NOT_FOUND));
             projectInformation.setName(projectInfoDTO.getName());
             projectInformation.setLanguage(projectInfoDTO.getLanguage());
             ProjectInformation updatedProject = projectInformationRepository.save(projectInformation);
