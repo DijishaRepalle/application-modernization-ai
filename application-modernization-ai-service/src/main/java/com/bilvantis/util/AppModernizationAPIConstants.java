@@ -46,4 +46,7 @@ public class AppModernizationAPIConstants {
     public static final String JOB = "JOB";
 
     public static final String JOB_ID = "001";
+
+    public static final Integer ZERO = 0;
+    public static final Boolean TRUE = true;
 }

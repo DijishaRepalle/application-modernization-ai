@@ -56,9 +56,14 @@ public class EmailServiceImpl implements EmailService {
     }
 
     /**
-     * send process start notification mail to user
+     * Sends a notification email to a distribution list indicating the start of a process.
+     * <p>
+     * This method constructs and sends an email using a predefined template. The email
+     * contains details about the process name and its initiation status. The recipients,
+     * sender email address, and template are configured via application properties.
      *
-     * @param processName String
+     * @param processName the name of the process that has been initiated, included in the email.
+     * @throws ApplicationException if an error occurs during email composition or sending.
      */
     @Override
     public void sendStartNotificationEmail(String processName) {

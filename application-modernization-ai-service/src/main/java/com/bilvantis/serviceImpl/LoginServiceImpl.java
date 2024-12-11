@@ -43,7 +43,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     /**
-     * send onetime password to user by using phonenumber
+     * send onetime password to user by using phoneNumber
      *
      * @param phoneNumber String
      * @return users otp
@@ -68,20 +68,20 @@ public class LoginServiceImpl implements LoginService {
             return appModernizationProperties.getUsersOtpSentViaMail();
 
         } catch (DataAccessException e) {
-            log.error(String.format(appModernizationProperties.getExceptionErrorMessage(), this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName()), e);
+            log.error(String.format(appModernizationProperties.getExceptionErrorMessage(), this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName()));
             throw new ApplicationException(e.getMessage());
         }
     }
 
     /**
-     * veroifies users login credentials using phone number and otp
+     * verifies users login credentials using phone number and otp
      *
      * @param phoneNumber String
      * @param otp         String
      * @return users details if the login is successful
      */
     @Override
-    public UserInformation verifyWorkerLogin(String phoneNumber, String otp) {
+    public UserInformation verifyUserLogin(String phoneNumber, String otp) {
         try {
             if (ObjectUtils.isEmpty(phoneNumber)) {
                 throw new ApplicationException(PHONE_NUMBER_NOT_FOUND);

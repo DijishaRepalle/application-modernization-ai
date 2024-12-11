@@ -30,4 +30,17 @@ public class AppModernizationExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException exception) {
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), GLOBAL_FIELD_ID);
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidRepositoryURLException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidRepositoryURLException(InvalidRepositoryURLException exception) {
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), GLOBAL_FIELD_ID);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+
 }
