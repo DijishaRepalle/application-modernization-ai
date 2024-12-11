@@ -61,7 +61,7 @@ public class JwtTokenService {
         String userId = extractUsername(token);
         String userRole = String.valueOf(userInformationService.getRoleBasedOnUserId(userId));
         // Bypass token validation for admins
-        if (ADMIN.equalsIgnoreCase(userRole)) {
+        if (ROLE_NAME.equalsIgnoreCase(userRole)) {
             return true;
         }
         return !isTokenExpired(token);

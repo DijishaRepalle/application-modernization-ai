@@ -37,7 +37,7 @@ public class AppModernizationAPIConstants {
     public static final String CLONE = "clone";
     public static final String REPO_CLONE_SUCCESS = "Repository cloned successfully";
 
-    public static final String ADMIN = "admin";
+    public static final String ROLE_NAME = "admin";
 
     public static final String ROLE =  "role";
 
