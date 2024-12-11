@@ -1,5 +1,6 @@
 package com.bilvantis.serviceImpl;
 
+import com.bilvantis.exception.ApplicationException;
 import com.bilvantis.exception.CloneFailedException;
 import com.bilvantis.exception.InvalidRepositoryURLException;
 import com.bilvantis.exception.ResourceNotFoundException;
@@ -41,7 +42,9 @@ public class GitCloneService {
     public void cloneRepository(String projectCode, String token) throws IOException, InterruptedException {
         // Validates the provided project code
         validateProjectCode(projectCode);
+        //validates the token provided or not
 
+        validateToken(token);
         // Fetches the project information using the project code
         ProjectInformation projectInformation = getProjectInformation(projectCode);
 
@@ -50,6 +53,9 @@ public class GitCloneService {
 
         // Generates a unique directory path for cloning the repository
         String cloneDirectoryPath = generateCloneDirectoryPath(projectCode);
+
+        // Validates the provided token
+        validateToken(token, projectInformation);
 
         // Executes the cloning process using the validated repository URL and generated path
         cloneRepositoryFromUrl(repoUrl, cloneDirectoryPath);
@@ -63,6 +69,31 @@ public class GitCloneService {
     private void validateProjectCode(String projectCode) {
         if (StringUtils.isBlank(projectCode)) {
             throw new ResourceNotFoundException(PROJECT_CODE_NOT_FOUND);
+        }
+    }
+    /**
+     * validates based on token if it ,exist or not
+     * @param token String
+     */
+    private void validateToken(String token) {
+        if (StringUtils.isBlank(token)) {
+            throw new ResourceNotFoundException(TOKEN_NOT_FOUND);
+        }
+    }
+
+    /**
+     * validates the stored token and provide token  same or not
+     * if equals it validates and clone the repository successfully
+     * or else throw exception like invalid  token
+     * @param token String
+     * @param projectInformation ProjectInformation
+     */
+    private void validateToken(String token, ProjectInformation projectInformation) {
+        // Fetch the token from the database
+        String storedToken = projectInformation.getToken();
+        // Compare the tokens
+        if (!token.equals(storedToken)) {
+            throw new ApplicationException(INVALID_TOKEN);
         }
     }
 

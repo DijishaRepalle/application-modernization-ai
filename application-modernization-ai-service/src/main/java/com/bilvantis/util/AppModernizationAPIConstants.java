@@ -26,9 +26,9 @@ public class AppModernizationAPIConstants {
 
     public static final String PROJECT_CODE_NOT_FOUND = "Project code was not found";
 
-    public static final String DATE_FORMAT =  "yyyyMMdd-HHmmss";
+    public static final String DATE_FORMAT = "yyyyMMdd-HHmmss";
 
-   public static final String CLONE_DIRECTORY =  "src/main/clone/";
+    public static final String CLONE_DIRECTORY = "src/main/clone/";
 
     public static final String HYPHEN = "-";
 
@@ -39,7 +39,7 @@ public class AppModernizationAPIConstants {
 
     public static final String ROLE_NAME = "admin";
 
-    public static final String ROLE =  "role";
+    public static final String ROLE = "role";
 
     public static final String PROJECT_CODE = "PRO";
 
@@ -49,4 +49,8 @@ public class AppModernizationAPIConstants {
 
     public static final Integer ZERO = 0;
     public static final Boolean TRUE = true;
+    public static final String TOKEN_NOT_FOUND = "Token cannot be bull or empty";
+
+    public static final String INVALID_TOKEN = "Invalid token provided";
+
 }

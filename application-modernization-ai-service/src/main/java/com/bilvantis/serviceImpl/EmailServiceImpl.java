@@ -47,7 +47,7 @@ public class EmailServiceImpl implements EmailService {
             String emailTemplateContent = new String(FileCopyUtils.copyToByteArray(emailTemplateResource.getInputStream()), StandardCharsets.UTF_8);
             emailTemplateContent = emailTemplateContent.replace(OTP, user.getOtp());
             emailTemplateContent = emailTemplateContent.replace(NAME, user.getFirstName());
-            messageHelper.setText(emailTemplateContent, TRUE);
+            messageHelper.setText(emailTemplateContent, true);
             javaMailSender.send(mimeMessage);
         } catch (Exception e) {
             log.error(String.format(appModernizationProperties.getExceptionErrorMessage(), this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName()), e);
