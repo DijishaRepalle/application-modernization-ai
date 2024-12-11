@@ -38,7 +38,7 @@ public class LoginController {
      * @throws IllegalArgumentException If the phone number is null or invalid.
      */
     @PostMapping("/one-time-password")
-    public ResponseEntity<UserResponseDTO> sendWorkerOneTimePassword(@NotNull @RequestParam String phoneNumber) {
+    public ResponseEntity<UserResponseDTO> sendUserOneTimePassword(@NotNull @RequestParam String phoneNumber) {
         return new ResponseEntity<>(UserRequestResponseBuilder.buildResponseDTO(loginService.sendOneTimePasswordMail(phoneNumber), null, null, null, null, AppModernizationAPIConstants.SUCCESS), HttpStatus.OK);
 
     }
@@ -57,8 +57,8 @@ public class LoginController {
      * @throws IllegalArgumentException If either the phone number or OTP is blank or invalid.
      */
     @GetMapping("/auth")
-    public ResponseEntity<UserResponseDTO> authLoginDetails(@NotBlank @RequestParam String phoneNumber, @NotBlank @RequestParam String otp) {
-        UserInformation userInformation = loginService.verifyWorkerLogin(phoneNumber, otp);
+    public ResponseEntity<UserResponseDTO> verifyUserDetails(@NotBlank @RequestParam String phoneNumber, @NotBlank @RequestParam String otp) {
+        UserInformation userInformation = loginService.verifyUserLogin(phoneNumber, otp);
         HttpHeaders headers = loginService.setHeader((userInformation.getId()));
         return new ResponseEntity<>(UserRequestResponseBuilder.buildResponseDTO(userInformation, null, null, null, null, AppModernizationAPIConstants.SUCCESS), headers, HttpStatus.OK);
     }

@@ -43,7 +43,7 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
     /**
      * creates a project with Project details
      *
-     * @param projectInformationDTO
+     * @param projectInformationDTO ProjectInformationDTO
      * @return a response containing the created project information
      */
 
@@ -51,7 +51,7 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
     public ProjectInformationDTO createProject(ProjectInformationDTO projectInformationDTO) {
         try {
             if (ObjectUtils.isEmpty(projectInformationDTO)) {
-                throw new DataNotFoundException(PROJECT_DETAILS_NOT_FOUND);
+                throw new ProjectImplementationSaveFailedException(PROJECT_DETAILS_NOT_FOUND);
             }
             ProjectInformation saveProjectDetails = projectInformationRepository.save(convertProjectDTOToProjectEntity(projectInformationDTO));
             return convertProjectEntityToProjectDTO(saveProjectDetails);
@@ -90,10 +90,9 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
     public void deleteProjectById(String projectId) {
         try {
             if (ObjectUtils.isEmpty(projectId)) {
-                throw new DataNotFoundException(PROJECT_ID_NOT_FOUND);
+                throw new ApplicationException(PROJECT_ID_NOT_NULL);
             }
-            ProjectInformation projectInformation = projectInformationRepository
-                    .findById(projectId).orElseThrow(() -> new DataNotFoundException(PROJECT_ID_NOT_FOUND));
+            ProjectInformation projectInformation = projectInformationRepository.findById(projectId).orElseThrow(() -> new DataNotFoundException(PROJECT_ID_NOT_FOUND));
 
             projectInformationRepository.deleteById(projectId);
 
@@ -106,15 +105,14 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
     /**
      * Updates the project information based on the provided project ID.
      *
-     * @param projectId  String
+     * @param projectId      String
      * @param projectInfoDTO ProjectInformationDTO
      * @return the updated project information DTO
      */
     @Override
     public ProjectInformationDTO updateProjectByProjectId(String projectId, ProjectInformationDTO projectInfoDTO) {
         try {
-            ProjectInformation projectInformation = projectInformationRepository.findById(projectId)
-                    .orElseThrow(() -> new DataNotFoundException(PROJECT_DETAILS_NOT_FOUND));
+            ProjectInformation projectInformation = projectInformationRepository.findById(projectId).orElseThrow(() -> new DataNotFoundException(PROJECT_ID_NOT_FOUND));
             projectInformation.setName(projectInfoDTO.getName());
             projectInformation.setLanguage(projectInfoDTO.getLanguage());
             ProjectInformation updatedProject = projectInformationRepository.save(projectInformation);
@@ -129,14 +127,14 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
      * API to tag  list of users to particular project
      *
      * @param projectCode String
-     * @param userDTOs UserInformationDTO
+     * @param userDTOs    UserInformationDTO
      * @return list of users tagged to project
      */
     @Override
     public ProjectInformationDTO addUsersToProject(String projectCode, List<UserInformationDTO> userDTOs) {
         try {
             // Fetch the project by project code
-            ProjectInformation project = fetchProjectByCode(projectCode);
+            ProjectInformation project = fetchProjectByProjectCode(projectCode);
             // Process and validate users
             List<UserInformation> usersToAdd = processUsers(userDTOs, project);
 
@@ -148,7 +146,7 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
             return convertProjectEntityToProjectDTO(updatedProject);
         } catch (DataAccessException e) {
             log.error(EXCEPTION_ERROR_MESSAGE, this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName());
-            throw new ProjectImplementationSaveFailedException(e.getMessage());
+            throw new ApplicationException(e.getMessage());
         }
     }
 
@@ -163,7 +161,7 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
     public ProjectInformationDTO removeTaggedUsersFromProject(String projectCode, List<String> userIds) {
         try {
             // Fetch the project by project code
-            ProjectInformation project = fetchProjectByCode(projectCode);
+            ProjectInformation project = fetchProjectByProjectCode(projectCode);
 
             // Ensure the project has tagged users
             validateTaggedUsersExist(project);
@@ -218,7 +216,7 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
      * @param projectCode String
      * @return projectCode
      */
-    private ProjectInformation fetchProjectByCode(String projectCode) {
+    private ProjectInformation fetchProjectByProjectCode(String projectCode) {
         return projectInformationRepository.findByProjectCode(projectCode)
                 .orElseThrow(() -> new DataNotFoundException(PROJECT_CODE_NOT_FOUND));
     }
@@ -264,7 +262,7 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
             return userInformationRepository.findById(userDTO.getId())
                     .orElseThrow(() -> new DataNotFoundException(USER_ID_NOT_FOUND));
         } else {
-            //create new usre
+            //create new user
             UserInformation newUser = UserInformationSupport.convertUsersDTOTOUsersEntity(userDTO);
             return userInformationRepository.save(newUser);
         }

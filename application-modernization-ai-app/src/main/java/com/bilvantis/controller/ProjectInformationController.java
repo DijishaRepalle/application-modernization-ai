@@ -26,7 +26,7 @@ public class ProjectInformationController {
     /**
      * Creates a new project with the provided project information.
      *
-     * @param projectInformationDTO
+     * @param projectInformationDTO ProjectInformationDTO
      * @return A response containing the created project information
      */
     @PostMapping
@@ -53,7 +53,7 @@ public class ProjectInformationController {
      * @param id String
      */
     @DeleteMapping("/{id}")
-    public void deleteProject(@NotNull @PathVariable String id) {
+    public void deleteProjectById(@NotNull @PathVariable String id) {
         projectInformationService.deleteProjectById(id);
     }
 
@@ -61,12 +61,12 @@ public class ProjectInformationController {
     /**
      * Updates the project information based on the provided project ID.
      *
-     * @param id                    String
+     * @param id String
      * @param projectInformationDTO ProjectInformationDTO
      * @return the updated project information DTO
      */
     @PutMapping("/{id}")
-    public ResponseEntity<ProjectInformationDTO> updateProject(@NotNull @PathVariable String id, @RequestBody ProjectInformationDTO projectInformationDTO) {
+    public ResponseEntity<ProjectInformationDTO> updateProjectById(@NotNull @PathVariable String id, @RequestBody ProjectInformationDTO projectInformationDTO) {
         ProjectInformationDTO updateData = projectInformationService.updateProjectByProjectId(id, projectInformationDTO);
         return new ResponseEntity<>(updateData, HttpStatus.OK);
     }
@@ -74,8 +74,8 @@ public class ProjectInformationController {
     /**
      * add users to particular project based on project code
      *
-     * @param projectCode
-     * @param userIds
+     * @param projectCode String
+     * @param userIds     UserInformationDTO
      * @return list of users for project
      */
     @PutMapping("/{projectCode}/add-users")
@@ -87,8 +87,8 @@ public class ProjectInformationController {
     /**
      * Deletes the list of users tagged to particular project
      *
-     * @param projectCode
-     * @param userIds
+     * @param projectCode String
+     * @param userIds     UserInformationDTO
      * @return deleted users
      */
     @DeleteMapping("/{projectCode}/delete-tagged-users")

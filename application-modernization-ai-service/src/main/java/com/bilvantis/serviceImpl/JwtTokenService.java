@@ -16,8 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static com.bilvantis.util.AppModernizationAPIConstants.ROLE;
-import static com.bilvantis.util.AppModernizationAPIConstants.SECRET;
+import static com.bilvantis.util.AppModernizationAPIConstants.*;
 
 @Component
 public class JwtTokenService {
@@ -63,7 +62,7 @@ public class JwtTokenService {
         String userId = extractUsername(token);
         String userRole = String.valueOf(userInformationService.getRoleBasedOnUserId(userId));
         // Bypass token validation for admins
-        if ("admin".equalsIgnoreCase(userRole)) {
+        if (ADMIN.equalsIgnoreCase(userRole)) {
             return true;
         }
         return !isTokenExpired(token);
@@ -78,7 +77,7 @@ public class JwtTokenService {
      */
     public String generateToken(String userId) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", ROLE);
+        claims.put(ROLE, ROLE_NAME);
         return createToken(claims, userId);
     }
 

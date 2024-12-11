@@ -15,7 +15,7 @@ public class AppModernizationAPIConstants {
     public static final String OTP_NOT_FOUND = "OTP cannot be null or empty";
     public static final String TOKEN = "token";
     public static final String SECRET = "4027d080f9a3954189ebca5ddbbfdfc9cb824314c0d6c910eff8bec1c689eabc";
-    public static final String ROLE = "ADMIN";
+    public static final String ROLE_NAME = "ADMIN";
 
     public static final String SUCCESS = "SUCCESS";
 
@@ -38,4 +38,9 @@ public class AppModernizationAPIConstants {
     public static final String CLONE = "clone";
     public static final String REPO_CLONE_SUCCESS = "Repository cloned successfully";
 
+    public static final String ROLE = "role";
+    public static final String ADMIN = "admin";
+
+    public static final Integer ZERO = 0;
+    public static final Boolean TRUE = true;
 }

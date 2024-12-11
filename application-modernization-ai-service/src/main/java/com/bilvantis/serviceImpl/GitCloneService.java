@@ -62,7 +62,7 @@ public class GitCloneService {
      */
     private void validateProjectCode(String projectCode) {
         if (StringUtils.isBlank(projectCode)) {
-            throw new IllegalArgumentException(PROJECT_CODE_NOT_FOUND);
+            throw new ResourceNotFoundException(PROJECT_CODE_NOT_FOUND);
         }
     }
 
@@ -133,7 +133,7 @@ public class GitCloneService {
 
             // Execute the git clone process
             ProcessBuilder builder = new ProcessBuilder(GIT, CLONE, repoUrl, cloneDirectoryPath);
-            builder.redirectErrorStream(true);
+            builder.redirectErrorStream(TRUE);
             Process process = builder.start();
 
             // Log the process output
@@ -146,7 +146,7 @@ public class GitCloneService {
 
             // Check the exit code and handle failure
             int exitCode = process.waitFor();
-            if (exitCode != 0) {
+            if (exitCode != ZERO) {
                 throw new CloneFailedException(CLONE_FAILED);
             }
 
