@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 import static com.bilvantis.util.AppModernizationAPIConstants.*;
 
@@ -24,40 +23,71 @@ import static com.bilvantis.util.AppModernizationAPIConstants.*;
 @Slf4j
 public class GitCloneService {
 
-    @Autowired
-    private CustomRepository customRepository;
+    private final CustomRepository customRepository;
 
+    @Autowired
+    public GitCloneService(CustomRepository customRepository) {
+        this.customRepository = customRepository;
+    }
+
+    /**
+     * Clones a Git repository associated with the specified project code
+     *
+     * @param projectCode String
+     * @param token       String
+     * @throws IOException          if an I/O error occurs during the cloning process
+     * @throws InterruptedException if the cloning process is interrupted
+     */
     public void cloneRepository(String projectCode, String token) throws IOException, InterruptedException {
-        // Validate project code
+        // Validates the provided project code
         validateProjectCode(projectCode);
 
-        // Fetch project information
+        // Fetches the project information using the project code
         ProjectInformation projectInformation = getProjectInformation(projectCode);
 
-        // Fetch and validate repository URL
+        // Retrieves and validates the repository URL from the project information
         String repoUrl = validateRepositoryUrl(projectInformation);
 
-        // Generate the clone directory path
+        // Generates a unique directory path for cloning the repository
         String cloneDirectoryPath = generateCloneDirectoryPath(projectCode);
 
-        // Clone the repository
+        // Executes the cloning process using the validated repository URL and generated path
         cloneRepositoryFromUrl(repoUrl, cloneDirectoryPath);
     }
 
+    /**
+     * validates based on project code if it ,exist or not
+     *
+     * @param projectCode String
+     */
     private void validateProjectCode(String projectCode) {
         if (StringUtils.isBlank(projectCode)) {
             throw new IllegalArgumentException(PROJECT_CODE_NOT_FOUND);
         }
     }
 
+    /**
+     * Fetch ProjectInformation based on given projectCode
+     *
+     * @param projectCode String
+     * @return the ProjectInformation corresponding to the provided project code.
+     */
     private ProjectInformation getProjectInformation(String projectCode) {
-        return customRepository.findByProjectCode(projectCode)
-                .orElseThrow(() -> {
-                    log.error(PROJECT_NOT_FOUND);
-                    return new ResourceNotFoundException(PROJECT_NOT_FOUND);
-                });
+        return customRepository.findByProjectCode(projectCode).orElseThrow(() -> {
+            log.error(PROJECT_NOT_FOUND);
+            return new ResourceNotFoundException(PROJECT_NOT_FOUND);
+        });
     }
 
+    /**
+     * Validates the repository URL for the given project.
+     * <p>
+     * This method retrieves the repository URL from the provided  ProjectInformation object
+     * and checks if it is blank or invalid. If the repository URL is invalid, an error is logged,
+     *
+     * @param projectInformation the ProjectInformation object containing the repository details.
+     * @return the valid repository URL as a String.
+     */
     private String validateRepositoryUrl(ProjectInformation projectInformation) {
         String repoUrl = projectInformation.getRepoUrl();
         if (StringUtils.isBlank(repoUrl)) {
@@ -67,6 +97,16 @@ public class GitCloneService {
         return repoUrl;
     }
 
+    /**
+     * Generates the directory path for cloning a repository.
+     * <p>
+     * This method creates a unique directory path by appending the project code and
+     * a timestamp to a base clone directory. The timestamp is formatted using the
+     *
+     * @param projectCode String
+     * @return the generated clone directory path as a String.
+     */
+
     private String generateCloneDirectoryPath(String projectCode) {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
@@ -74,16 +114,25 @@ public class GitCloneService {
         return CLONE_DIRECTORY + projectCode + HYPHEN + timestamp;
     }
 
+    /**
+     * Clones a Git repository from the specified URL into the given directory path.
+     *
+     * @param repoUrl            String
+     * @param cloneDirectoryPath the local directory path where the repository will be cloned.
+     * @throws IOException          if an I/O error occurs while cloning the repository.
+     * @throws InterruptedException if the cloning process is interrupted.
+     * @throws CloneFailedException if the Git clone process exits with a non-zero code.
+     */
     private void cloneRepositoryFromUrl(String repoUrl, String cloneDirectoryPath) throws IOException, InterruptedException {
         try {
-            // Create the clone directory
+            //This method creates the necessary clone directory (if it does not exist)
             File cloneDirectory = new File(cloneDirectoryPath);
             if (!cloneDirectory.exists()) {
                 cloneDirectory.mkdirs();
             }
 
             // Execute the git clone process
-            ProcessBuilder builder = new ProcessBuilder("git", "clone", repoUrl, cloneDirectoryPath);
+            ProcessBuilder builder = new ProcessBuilder(GIT, CLONE, repoUrl, cloneDirectoryPath);
             builder.redirectErrorStream(true);
             Process process = builder.start();
 
@@ -108,4 +157,3 @@ public class GitCloneService {
     }
 
 }
-

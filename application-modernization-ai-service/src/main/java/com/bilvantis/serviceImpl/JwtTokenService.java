@@ -16,15 +16,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import static com.bilvantis.util.AppModernizationAPIConstants.ROLE;
+import static com.bilvantis.util.AppModernizationAPIConstants.SECRET;
+
 @Component
 public class JwtTokenService {
 
-    private static final String SECRET = "4027d080f9a3954189ebca5ddbbfdfc9cb824314c0d6c910eff8bec1c689eabc";
-    private static final String ROLE = "ADMIN";
+
+    private final UserInformationService userInformationService;
+    private final UserInformationRepository userInformationRepository;
+
     @Autowired
-    private UserInformationService userInformationService;
-    @Autowired
-    private UserInformationRepository userInformationRepository;
+    public JwtTokenService(UserInformationService userInformationService, UserInformationRepository userInformationRepository) {
+        this.userInformationService = userInformationService;
+        this.userInformationRepository = userInformationRepository;
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -53,10 +59,8 @@ public class JwtTokenService {
      * @param token String
      * @return Boolean
      */
-
     public Boolean validateToken(String token) {
         String userId = extractUsername(token);
-
         String userRole = String.valueOf(userInformationService.getRoleBasedOnUserId(userId));
         // Bypass token validation for admins
         if ("admin".equalsIgnoreCase(userRole)) {
@@ -77,17 +81,17 @@ public class JwtTokenService {
         claims.put("role", ROLE);
         return createToken(claims, userId);
     }
+
     /**
      * Create token
      *
-     * @param claims   Claims
+     * @param claims Claims
      * @param userId UserId
      * @return Token
      */
 
     private String createToken(Map<String, Object> claims, String userId) {
-        return Jwts.builder().setClaims(claims).setSubject(userId).setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
-                .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
+        return Jwts.builder().setClaims(claims).setSubject(userId).setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)).signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
 
     /**

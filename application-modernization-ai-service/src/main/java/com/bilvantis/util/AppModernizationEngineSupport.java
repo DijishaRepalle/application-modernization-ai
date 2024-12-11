@@ -3,6 +3,7 @@ package com.bilvantis.util;
 import com.bilvantis.model.UserInformationDTO;
 import com.bilvantis.service.EmailService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,7 @@ public class AppModernizationEngineSupport {
     private final EmailService emailService;
     private final EmailDetails emailDetails;
 
+    @Autowired
     public AppModernizationEngineSupport(AppModernizationProperties appModernizationProperties, EmailService emailService, EmailDetails emailDetails) {
         this.appModernizationProperties = appModernizationProperties;
         this.emailService = emailService;

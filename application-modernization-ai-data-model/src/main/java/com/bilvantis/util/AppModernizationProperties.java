@@ -32,10 +32,10 @@ public class AppModernizationProperties {
     private String loginOtpExpired;
 
     @Value("${login.phone-number-otp-mismatch}")
-    private String workerUserPhoneNumberOrOTPMismatch;
+    private String usersPhoneNumberOrOTPMismatch;
 
-    @Value("${worker.list-not-available}")
-    private String workersNotAvailable;
+    @Value("${users.not-available}")
+    private String usersNotAvailable;
 
     @Value("${spring.mail.username}")
     private String senderMailId;
