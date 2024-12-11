@@ -1,6 +1,7 @@
 package com.bilvantis.serviceImpl;
 
-import com.bilvantis.repository.UserInformationRepository;
+import com.bilvantis.model.UserInformation;
+import com.bilvantis.model.UserInformationDTO;
 import com.bilvantis.service.UserInformationService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -16,20 +17,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static com.bilvantis.util.AppModernizationAPIConstants.ROLE;
-import static com.bilvantis.util.AppModernizationAPIConstants.SECRET;
+import static com.bilvantis.util.AppModernizationAPIConstants.*;
 
 @Component
 public class JwtTokenService {
 
 
-    private final UserInformationService userInformationService;
-    private final UserInformationRepository userInformationRepository;
+    private final UserInformationService<UserInformation, UserInformationDTO> userInformationService;
 
     @Autowired
-    public JwtTokenService(UserInformationService userInformationService, UserInformationRepository userInformationRepository) {
+    public JwtTokenService(UserInformationService<UserInformation, UserInformationDTO> userInformationService) {
         this.userInformationService = userInformationService;
-        this.userInformationRepository = userInformationRepository;
     }
 
     public String extractUsername(String token) {
@@ -63,7 +61,7 @@ public class JwtTokenService {
         String userId = extractUsername(token);
         String userRole = String.valueOf(userInformationService.getRoleBasedOnUserId(userId));
         // Bypass token validation for admins
-        if ("admin".equalsIgnoreCase(userRole)) {
+        if (ADMIN.equalsIgnoreCase(userRole)) {
             return true;
         }
         return !isTokenExpired(token);
@@ -78,7 +76,7 @@ public class JwtTokenService {
      */
     public String generateToken(String userId) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", ROLE);
+        claims.put(ROLE, ADMIN);
         return createToken(claims, userId);
     }
 

@@ -22,7 +22,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.bilvantis.util.AppModernizationAPIConstants.ROLE;
+import static com.bilvantis.util.AppModernizationAPIConstants.ADMIN;
 import static com.bilvantis.util.ProjectInformationServiceImplConstants.EXCEPTION_ERROR_MESSAGE;
 import static com.bilvantis.util.UserInformationServiceImplConstants.EMAIL_ALREADY_EXISTS;
 import static com.bilvantis.util.UserInformationServiceImplConstants.USER_LIST_NOT_FOUND;
@@ -44,7 +44,7 @@ public class UserInformationServiceImpl implements UserInformationService<UserIn
     @Override
     public Boolean getRoleBasedOnUserId(String userId) {
         String role = userInformationRepository.findRoleByUserId(userId);
-        return StringUtils.equalsIgnoreCase(role, ROLE);
+        return StringUtils.equalsIgnoreCase(role, ADMIN);
     }
 
     /**
