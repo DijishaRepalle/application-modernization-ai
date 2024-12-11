@@ -6,6 +6,8 @@ import com.bilvantis.util.UserRequestResponseBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.bilvantis.util.ModernizationAppConstants.START_NOTIFICATION_SUCCESS;
+
 @RestController
 @RequestMapping("/api/email")
 public class EmailController {
@@ -33,8 +35,8 @@ public class EmailController {
      */
 
     @PostMapping("/sendStartNotification")
-    public ResponseEntity<UserResponseDTO> sendStartNotification(@RequestParam String processName) {
+    public ResponseEntity<UserResponseDTO> sendStartNotification(@RequestBody String processName) {
         emailService.sendStartNotificationEmail(processName);
-        return ResponseEntity.ok(UserRequestResponseBuilder.buildResponseDTO(null, null, "Start notification email sent successfully."));
+        return ResponseEntity.ok(UserRequestResponseBuilder.buildResponseDTO(null, null, START_NOTIFICATION_SUCCESS));
     }
 }
