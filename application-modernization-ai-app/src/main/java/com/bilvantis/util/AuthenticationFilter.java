@@ -86,6 +86,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     @Override
     public boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
+
         Pattern authPattern = Pattern.compile(AUTH_ENDPOINT, Pattern.CASE_INSENSITIVE);
         return (authPattern.matcher(path).find());
     }
