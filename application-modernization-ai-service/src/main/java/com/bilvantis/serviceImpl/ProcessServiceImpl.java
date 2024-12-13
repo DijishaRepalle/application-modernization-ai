@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -117,6 +118,7 @@ public class ProcessServiceImpl implements ProcessService {
             processTransaction.setProjectCode(projectCode);
             processTransaction.setStepId(processStep.getStepId());
             processTransaction.setIsActive(Boolean.TRUE);
+            processTransaction.setCreatedDate(LocalDateTime.now());
             processTransactionSet.add(processTransaction);
         });
         return processTransactionSet;
@@ -124,7 +126,7 @@ public class ProcessServiceImpl implements ProcessService {
 
     private String generateJobId() {
         StringBuilder jobId = new StringBuilder("JOB");
-        processTransactionRepository.findLatestRecord().ifPresentOrElse(
+        processTransactionRepository.findTopByOrderByCreatedByDesc().ifPresentOrElse(
                 transaction -> {
                     int seqNo = Integer.parseInt(transaction.getJobId().substring(3));
                     int newSeqNo = seqNo + 1;

@@ -12,8 +12,8 @@ import java.util.UUID;
 
 @Repository
 public interface ProcessTransactionRepository extends MongoRepository<ProcessTransaction, UUID> {
-    @Query(value = "{}", sort = "{ 'timestamp' : -1 }")
-    Optional<ProcessTransaction> findLatestRecord();
+    //@Query(value = "{}", sort = "{ 'timestamp' : -1 }")
+    Optional<ProcessTransaction> findTopByOrderByCreatedByDesc();
     @Query(value = "{}", sort = "{ 'timestamp' : -1 }")
     List<ProcessTransaction> findAllByProjectCode(String projectCode);
 
