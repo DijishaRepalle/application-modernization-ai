@@ -18,7 +18,7 @@ import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static com.bilvantis.util.AppModernizationAPIConstants.*;
+import static com.bilvantis.constants.AppModernizationAPIConstants.*;
 
 @Service
 @Slf4j
@@ -68,6 +68,7 @@ public class GitCloneService {
      */
     private void validateProjectCode(String projectCode) {
         if (StringUtils.isBlank(projectCode)) {
+            log.error(PROJECT_CODE_NOT_FOUND);
             throw new ResourceNotFoundException(PROJECT_CODE_NOT_FOUND);
         }
     }
@@ -77,6 +78,7 @@ public class GitCloneService {
      */
     private void validateToken(String token) {
         if (StringUtils.isBlank(token)) {
+            log.error(TOKEN_NOT_FOUND);
             throw new ResourceNotFoundException(TOKEN_NOT_FOUND);
         }
     }
@@ -93,6 +95,7 @@ public class GitCloneService {
         String storedToken = projectInformation.getToken();
         // Compare the tokens
         if (!token.equals(storedToken)) {
+            log.error(INVALID_TOKEN);
             throw new ApplicationException(INVALID_TOKEN);
         }
     }
@@ -106,7 +109,7 @@ public class GitCloneService {
     private ProjectInformation getProjectInformation(String projectCode) {
         return customRepository.findByProjectCode(projectCode).orElseThrow(() -> {
             log.error(PROJECT_NOT_FOUND);
-            return new ResourceNotFoundException(PROJECT_NOT_FOUND);
+            throw  new ResourceNotFoundException(PROJECT_NOT_FOUND);
         });
     }
 

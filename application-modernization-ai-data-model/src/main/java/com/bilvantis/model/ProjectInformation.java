@@ -15,12 +15,11 @@ import java.util.List;
 @Document(collection = "Projects")
 public class ProjectInformation extends BaseDTO {
     @Id
-    private String id;
-    private String name;
-    private String description;
-    private String ownerId;
-    private String status;
-    private String language;
+    private String ProjectId;
+    private String ProjectName;
+    private String ProjectDescription;
+    private String ProjectStatus;
+    private String programmingLanguage;
     private String version;
     private String projectCode;
     private String repoUrl;

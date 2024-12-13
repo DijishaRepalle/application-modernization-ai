@@ -17,7 +17,7 @@ import org.springframework.util.FileCopyUtils;
 
 import java.nio.charset.StandardCharsets;
 
-import static com.bilvantis.util.EmailServiceImplConstants.*;
+import static com.bilvantis.constants.EmailServiceImplConstants.*;
 
 @Service("emailServiceImpl")
 @Slf4j
@@ -82,7 +82,7 @@ public class EmailServiceImpl implements EmailService {
             emailTemplateContent = emailTemplateContent.replace(STATUS, INITIATED);
 
             messageHelper.setSubject(PROCESS_START_NOTIFICATION);
-            messageHelper.setText(emailTemplateContent, TRUE);
+            messageHelper.setText(emailTemplateContent, true);
 
             javaMailSender.send(mimeMessage);
         } catch (Exception e) {

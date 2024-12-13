@@ -16,12 +16,11 @@ public class ProjectInformationSupport {
 
     public static ProjectInformationDTO convertProjectEntityToProjectDTO(ProjectInformation project) {
         ProjectInformationDTO projectDTO = new ProjectInformationDTO();
-        projectDTO.setId(project.getId());
-        projectDTO.setName(project.getName());
-        projectDTO.setDescription(project.getDescription());
-        projectDTO.setStatus(project.getStatus());
-        projectDTO.setLanguage(project.getLanguage());
-        projectDTO.setOwnerId(project.getOwnerId());
+        projectDTO.setProjectId(project.getProjectId());
+        projectDTO.setProjectName(project.getProjectName());
+        projectDTO.setProjectDescription(project.getProjectDescription());
+        projectDTO.setProjectStatus(project.getProjectStatus());
+        projectDTO.setProgrammingLanguage(project.getProgrammingLanguage());
         projectDTO.setVersion(project.getVersion());
         projectDTO.setCreatedDate(LocalDateTime.now());
         projectDTO.setCreatedBy(project.getCreatedBy());
@@ -39,12 +38,11 @@ public class ProjectInformationSupport {
 
     public static ProjectInformation convertProjectDTOToProjectEntity(ProjectInformationDTO projectDTO) {
         ProjectInformation project = new ProjectInformation();
-        project.setId(projectDTO.getId());
-        project.setName(projectDTO.getName());
-        project.setDescription(projectDTO.getDescription());
-        project.setStatus(projectDTO.getStatus());
-        project.setLanguage(projectDTO.getLanguage());
-        project.setOwnerId(projectDTO.getOwnerId());
+        project.setProjectId(projectDTO.getProjectId());
+        project.setProjectName(projectDTO.getProjectName());
+        project.setProjectDescription(projectDTO.getProjectDescription());
+        project.setProjectStatus(projectDTO.getProjectStatus());
+        project.setProgrammingLanguage(projectDTO.getProgrammingLanguage());
         project.setVersion(projectDTO.getVersion());
         project.setCreatedDate(LocalDateTime.now());
         project.setCreatedBy(projectDTO.getCreatedBy());

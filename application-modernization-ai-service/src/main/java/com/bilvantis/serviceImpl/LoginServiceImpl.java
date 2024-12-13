@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static com.bilvantis.util.AppModernizationAPIConstants.*;
+import static com.bilvantis.constants.AppModernizationAPIConstants.*;
 import static com.bilvantis.util.UserInformationSupport.convertUsersDTOTOUsersEntity;
 
 @Service
@@ -52,11 +52,12 @@ public class LoginServiceImpl implements LoginService {
     public String sendOneTimePasswordMail(String phoneNumber) {
         try {
             if (!Predicates.isValidPhoneNumber.test(phoneNumber)) {
+                log.error(INVALID_PHONE_NUMBER);
                 throw new ApplicationException(INVALID_PHONE_NUMBER);
             }
             UserInformationDTO dto = userInformationRepository.findByPhoneNumber(phoneNumber).orElseThrow(() -> {
                 log.error(PHONE_NUMBER_NOT_EXIST);
-                return new ApplicationException(PHONE_NUMBER_NOT_EXIST);
+                throw  new ApplicationException(PHONE_NUMBER_NOT_EXIST);
             });
             String randomSixDigits = appModernizationEngineSupport.generateRandomSixDigits();
             dto.setOtp(randomSixDigits);
@@ -84,9 +85,11 @@ public class LoginServiceImpl implements LoginService {
     public UserInformation verifyUserLogin(String phoneNumber, String otp) {
         try {
             if (ObjectUtils.isEmpty(phoneNumber)) {
+                log.error(PHONE_NUMBER_NOT_FOUND);
                 throw new ApplicationException(PHONE_NUMBER_NOT_FOUND);
             }
             if (ObjectUtils.isEmpty(otp)) {
+                log.error(OTP_NOT_FOUND);
                 throw new ApplicationException(OTP_NOT_FOUND);
             }
             Optional<UserInformationDTO> number = userInformationRepository.findByPhoneNumber(phoneNumber);

@@ -1,4 +1,4 @@
-package com.bilvantis.util;
+package com.bilvantis.constants;
 
 public class EmailServiceImplConstants {
     public static final String OTP_EMAIl_TEMPLATE = "otpEmail-Template.html";

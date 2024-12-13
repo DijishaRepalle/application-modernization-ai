@@ -1,7 +1,7 @@
 package com.bilvantis.serviceImpl;
 
-import com.bilvantis.constants.ProcessErrorEnum;
-import com.bilvantis.constants.Status;
+import com.bilvantis.util.ProcessErrorEnum;
+import com.bilvantis.util.Status;
 import com.bilvantis.exception.ApplicationException;
 import com.bilvantis.exception.ResourceNotFoundException;
 import com.bilvantis.model.Process;
@@ -25,10 +25,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import static com.bilvantis.constants.CommonConstants.ERROR_EXCEPTION_LOG_PREFIX;
-import static com.bilvantis.constants.CommonConstants.ERROR_LOG_PREFIX;
-import static com.bilvantis.util.AppModernizationAPIConstants.JOB;
-import static com.bilvantis.util.AppModernizationAPIConstants.JOB_ID;
+import static com.bilvantis.constants.AppModernizationAPIConstants.*;
+import static com.bilvantis.constants.CommonConstants.*;
+
 
 @Service
 @Slf4j

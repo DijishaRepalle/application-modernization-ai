@@ -1,4 +1,4 @@
-package com.bilvantis.config;
+package com.bilvantis.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

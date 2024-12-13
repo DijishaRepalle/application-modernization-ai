@@ -1,7 +1,7 @@
 package com.bilvantis.controller;
 
+import com.bilvantis.model.ProjectInformation;
 import com.bilvantis.model.ProjectInformationDTO;
-import com.bilvantis.model.UserInformationDTO;
 import com.bilvantis.service.ProjectInformationService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/project-service")
+@RequestMapping("/project")
 public class ProjectInformationController {
 
-    private final ProjectInformationService projectInformationService;
+    private final ProjectInformationService<ProjectInformation,ProjectInformationDTO> projectInformationService;
 
     @Autowired
     public ProjectInformationController(ProjectInformationService projectInformationService) {
@@ -53,8 +53,9 @@ public class ProjectInformationController {
      * @param id String
      */
     @DeleteMapping("/{id}")
-    public void deleteProjectById(@NotNull @PathVariable String id) {
+    public ResponseEntity<Void> deleteProjectById(@NotNull @PathVariable String id) {
         projectInformationService.deleteProjectById(id);
+        return ResponseEntity.noContent().build();
     }
 
 
@@ -71,29 +72,4 @@ public class ProjectInformationController {
         return new ResponseEntity<>(updateData, HttpStatus.OK);
     }
 
-    /**
-     * add users to particular project based on project code
-     *
-     * @param projectCode String
-     * @param userIds     UserInformationDTO
-     * @return list of users for project
-     */
-    @PutMapping("/{projectCode}/add-users")
-    public ResponseEntity<ProjectInformationDTO> addUsersToProject(@PathVariable String projectCode, @RequestBody List<UserInformationDTO> userIds) {
-        ProjectInformationDTO updatedProject = projectInformationService.addUsersToProject(projectCode, userIds);
-        return new ResponseEntity<>(updatedProject, HttpStatus.OK);
-    }
-
-    /**
-     * Deletes the list of users tagged to particular project
-     *
-     * @param projectCode String
-     * @param userIds     UserInformationDTO
-     * @return deleted users
-     */
-    @DeleteMapping("/{projectCode}/delete-tagged-users")
-    public ResponseEntity<ProjectInformationDTO> deleteTaggedUsers(@PathVariable String projectCode, @RequestBody List<String> userIds) {
-        ProjectInformationDTO updatedProject = projectInformationService.removeTaggedUsersFromProject(projectCode, userIds);
-        return new ResponseEntity<>(updatedProject, HttpStatus.OK);
-    }
 }

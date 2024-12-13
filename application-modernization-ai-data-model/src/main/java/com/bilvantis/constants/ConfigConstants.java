@@ -1,4 +1,4 @@
-package com.bilvantis.config;
+package com.bilvantis.constants;
 
 public class ConfigConstants {
 

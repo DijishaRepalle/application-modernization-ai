@@ -1,5 +1,6 @@
 package com.bilvantis.service;
 
+import com.bilvantis.model.ProjectInformationDTO;
 import com.bilvantis.model.UserInformation;
 import com.bilvantis.model.UserInformationDTO;
 
@@ -19,6 +20,10 @@ public interface UserInformationService<I extends UserInformation, J extends Use
     void deleteUser(String email);
 
     List<J> getAllUsersInformation();
+
+    ProjectInformationDTO addUsersToProject(String projectCode, List<UserInformationDTO> users);
+
+    ProjectInformationDTO removeTaggedUsersFromProject(String projectCode, List<String> userIds);
 
 
 }
