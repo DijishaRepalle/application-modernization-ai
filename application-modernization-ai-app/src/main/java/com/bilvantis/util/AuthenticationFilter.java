@@ -2,12 +2,12 @@ package com.bilvantis.util;
 
 import com.bilvantis.serviceImpl.JwtTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -25,8 +25,12 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class AuthenticationFilter extends OncePerRequestFilter {
+    private final JwtTokenService jwtTokenService;
+
     @Autowired
-    private JwtTokenService jwtTokenService;
+    public AuthenticationFilter(JwtTokenService jwtTokenService) {
+        this.jwtTokenService = jwtTokenService;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -41,7 +45,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             try {
                 String authHeader = request.getHeader(AUTHORIZATION);
                 String token = null;
-                /*if (StringUtils.isNotBlank(authHeader)) {
+                if (StringUtils.isNotBlank(authHeader)) {
                     if (authHeader.startsWith(BEARER)) {
                         token = authHeader.substring(BEARER.length());
                         Boolean authorizedUser = jwtTokenService.validateToken(token);
@@ -59,7 +63,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                     log.error(TOKEN_NOT_PASSED);
                     response.sendError(HttpStatus.UNAUTHORIZED.value(), TOKEN_NOT_PASSED);
                     return;
-                }*/
+                }
             } catch (ExpiredJwtException ex) {
                 log.error(TOKEN_EXPIRED);
                 response.sendError(HttpStatus.UNAUTHORIZED.value(), TOKEN_EXPIRED);
@@ -73,9 +77,16 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
+    /**
+     * Determines if the current request should bypass the filter based on its URI.
+     *
+     * @param request current HTTP request
+     * @return boolean
+     */
     @Override
     public boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
+
         Pattern authPattern = Pattern.compile(AUTH_ENDPOINT, Pattern.CASE_INSENSITIVE);
         return (authPattern.matcher(path).find());
     }

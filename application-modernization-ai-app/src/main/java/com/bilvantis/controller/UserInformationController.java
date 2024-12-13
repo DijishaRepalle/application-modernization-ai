@@ -20,9 +20,9 @@ import java.util.Optional;
 @Slf4j
 public class UserInformationController {
 
-    private final UserInformationService userInformationService;
+    private final UserInformationService<UserInformation,UserInformationDTO> userInformationService;
 
-    public UserInformationController(UserInformationService userInformationService) {
+    public UserInformationController(UserInformationService<UserInformation,UserInformationDTO>  userInformationService) {
         this.userInformationService = userInformationService;
     }
 
@@ -106,9 +106,13 @@ public class UserInformationController {
 
 
     /**
-     * get api to retrive the list of users in db
+     * Retrieves a list of all users' information.
      *
-     * @return a list of users
+     * This endpoint returns a list of {@link UserInformationDTO} objects containing
+     * detailed information for each user. The response status is OK (HTTP 200)
+     * if the request is successful.
+     *
+     * @return ResponseEntity containing a list of {@link UserInformationDTO} and an HTTP status of 200 (OK)
      */
 
     @GetMapping("/users-list")

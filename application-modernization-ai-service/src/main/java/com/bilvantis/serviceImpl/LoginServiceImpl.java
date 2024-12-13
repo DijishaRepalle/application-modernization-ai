@@ -42,7 +42,12 @@ public class LoginServiceImpl implements LoginService {
         this.appModernizationProperties = appModernizationProperties;
     }
 
-
+    /**
+     * send onetime password to user by using phoneNumber
+     *
+     * @param phoneNumber String
+     * @return users otp
+     */
     @Override
     public String sendOneTimePasswordMail(String phoneNumber) {
         try {
@@ -63,19 +68,24 @@ public class LoginServiceImpl implements LoginService {
             return appModernizationProperties.getUsersOtpSentViaMail();
 
         } catch (DataAccessException e) {
-            log.error(String.format(appModernizationProperties.getExceptionErrorMessage(), this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName()), e);
+            log.error(String.format(appModernizationProperties.getExceptionErrorMessage(), this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName()));
             throw new ApplicationException(e.getMessage());
         }
     }
 
-
+    /**
+     * verifies users login credentials using phone number and otp
+     *
+     * @param phoneNumber String
+     * @param otp         String
+     * @return users details if the login is successful
+     */
     @Override
-    public UserInformation verifyWorkerLogin(String phoneNumber, String otp) {
+    public UserInformation verifyUserLogin(String phoneNumber, String otp) {
         try {
             if (ObjectUtils.isEmpty(phoneNumber)) {
                 throw new ApplicationException(PHONE_NUMBER_NOT_FOUND);
             }
-
             if (ObjectUtils.isEmpty(otp)) {
                 throw new ApplicationException(OTP_NOT_FOUND);
             }
@@ -90,16 +100,22 @@ public class LoginServiceImpl implements LoginService {
                 if (StringUtils.equals(dto.getOtp(), otp)) {
                     return convertUsersDTOTOUsersEntity(dto);
                 }
-                throw new ApplicationException(appModernizationProperties.getWorkerUserPhoneNumberOrOTPMismatch());
+                throw new ApplicationException(appModernizationProperties.getUsersPhoneNumberOrOTPMismatch());
             }
-            throw new ApplicationException(appModernizationProperties.getWorkersNotAvailable());
+            throw new ApplicationException(appModernizationProperties.getUsersNotAvailable());
 
         } catch (DataAccessException e) {
-            log.error(String.format(appModernizationProperties.getExceptionErrorMessage(), this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName()), e);
+            log.error(String.format(appModernizationProperties.getExceptionErrorMessage(), this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName()));
             throw new ApplicationException(e.getMessage());
         }
     }
 
+    /**
+     * Sets the HTTP headers with a generated JWT token for the specified worker.
+     *
+     * @param userId the ID of the worker for whom the token is generated.
+     * @return HttpHeaders containing the JWT token.
+     */
     @Override
     public HttpHeaders setHeader(String userId) {
         HttpHeaders headers = new HttpHeaders();

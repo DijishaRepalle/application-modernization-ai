@@ -1,6 +1,7 @@
 package com.bilvantis.serviceImpl;
 
-import com.bilvantis.repository.UserInformationRepository;
+import com.bilvantis.model.UserInformation;
+import com.bilvantis.model.UserInformationDTO;
 import com.bilvantis.service.UserInformationService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -16,15 +17,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import static com.bilvantis.util.AppModernizationAPIConstants.*;
+
 @Component
 public class JwtTokenService {
 
-    private static final String SECRET = "4027d080f9a3954189ebca5ddbbfdfc9cb824314c0d6c910eff8bec1c689eabc";
-    private static final String ROLE = "ADMIN";
+
+    private final UserInformationService<UserInformation, UserInformationDTO> userInformationService;
+
     @Autowired
-    private UserInformationService userInformationService;
-    @Autowired
-    private UserInformationRepository userInformationRepository;
+    public JwtTokenService(UserInformationService<UserInformation, UserInformationDTO> userInformationService) {
+        this.userInformationService = userInformationService;
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -53,13 +57,11 @@ public class JwtTokenService {
      * @param token String
      * @return Boolean
      */
-
     public Boolean validateToken(String token) {
         String userId = extractUsername(token);
-
         String userRole = String.valueOf(userInformationService.getRoleBasedOnUserId(userId));
         // Bypass token validation for admins
-        if ("admin".equalsIgnoreCase(userRole)) {
+        if (ROLE_NAME.equalsIgnoreCase(userRole)) {
             return true;
         }
         return !isTokenExpired(token);
@@ -74,20 +76,20 @@ public class JwtTokenService {
      */
     public String generateToken(String userId) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", ROLE);
+        claims.put(ROLE, ROLE_NAME);
         return createToken(claims, userId);
     }
+
     /**
      * Create token
      *
-     * @param claims   Claims
+     * @param claims Claims
      * @param userId UserId
      * @return Token
      */
 
     private String createToken(Map<String, Object> claims, String userId) {
-        return Jwts.builder().setClaims(claims).setSubject(userId).setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
-                .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
+        return Jwts.builder().setClaims(claims).setSubject(userId).setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)).signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
 
     /**

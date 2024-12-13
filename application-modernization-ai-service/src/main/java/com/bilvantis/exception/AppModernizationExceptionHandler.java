@@ -5,7 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import static com.bilvantis.util.ModernizationAppConstants.GLOBAL_FIELD_ID;
+import static com.bilvantis.util.AppModernizationAPIConstants.GLOBAL_FIELD_ID;
+
 
 @ControllerAdvice
 public class AppModernizationExceptionHandler {
@@ -28,5 +29,18 @@ public class AppModernizationExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), GLOBAL_FIELD_ID);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException exception) {
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), GLOBAL_FIELD_ID);
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidRepositoryURLException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidRepositoryURLException(InvalidRepositoryURLException exception) {
+        ErrorResponse errorResponse = new ErrorResponse(exception.getMessage(), GLOBAL_FIELD_ID);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
 
 }
