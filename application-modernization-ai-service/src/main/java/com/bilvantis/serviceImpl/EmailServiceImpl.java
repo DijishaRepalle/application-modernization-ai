@@ -82,7 +82,7 @@ public class EmailServiceImpl implements EmailService {
             emailTemplateContent = emailTemplateContent.replace(STATUS, INITIATED);
 
             messageHelper.setSubject(PROCESS_START_NOTIFICATION);
-            messageHelper.setText(emailTemplateContent, TRUE);
+            messageHelper.setText(emailTemplateContent, true);
 
             javaMailSender.send(mimeMessage);
         } catch (Exception e) {
