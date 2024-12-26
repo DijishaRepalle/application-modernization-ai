@@ -39,4 +39,15 @@ public class EmailController {
         emailService.sendStartNotificationEmail(processName);
         return ResponseEntity.ok(UserRequestResponseBuilder.buildResponseDTO(null, null, START_NOTIFICATION_SUCCESS));
     }
+    /**
+     * Sends a notification email indicating the start of the code revamp process.
+     *
+     * @param processName the name of the process for which the notification is being sent
+     * @return ResponseEntity containing the UserResponseDTO with the success message
+     */
+    @PostMapping("/send-code-revamp-start-notification")
+    public ResponseEntity<UserResponseDTO> sendCodeRevampStartNotificationEmail(@RequestParam String processName) {
+        emailService.sendCodeRevampStartNotificationEmail(processName);
+        return ResponseEntity.ok(UserRequestResponseBuilder.buildResponseDTO(null, null, START_NOTIFICATION_SUCCESS));
+    }
 }

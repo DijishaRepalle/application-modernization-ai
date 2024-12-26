@@ -36,7 +36,7 @@ public class EmailServiceImpl implements EmailService {
      * Sends an email for OTP generation using the provided email details and worker information.
      *
      * @param emailDetails EmailDetails
-     * @param user  User
+     * @param user         User
      */
     @Override
     public void sendMailOtpGeneration(EmailDetails emailDetails, UserInformationDTO user) {
@@ -66,7 +66,7 @@ public class EmailServiceImpl implements EmailService {
      * @throws ApplicationException if an error occurs during email composition or sending.
      */
     @Override
-    public void sendStartNotificationEmail(String processName) {
+    public void sendNotificationEmail(String processName, String templatePath, String subject) {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             String distributionList = appModernizationProperties.getDistributionList();
@@ -75,13 +75,13 @@ public class EmailServiceImpl implements EmailService {
             messageHelper.setFrom(appModernizationProperties.getSenderMailId());
             messageHelper.setTo(recipients);
 
-            ClassPathResource emailTemplateResource = new ClassPathResource(PROCESS_START_NOTIFICATION_TEMPLATE);
+            ClassPathResource emailTemplateResource = new ClassPathResource(templatePath);
             String emailTemplateContent = new String(FileCopyUtils.copyToByteArray(emailTemplateResource.getInputStream()), StandardCharsets.UTF_8);
 
             emailTemplateContent = emailTemplateContent.replace(PROCESS_NAME, processName);
             emailTemplateContent = emailTemplateContent.replace(STATUS, INITIATED);
 
-            messageHelper.setSubject(PROCESS_START_NOTIFICATION);
+            messageHelper.setSubject(subject);
             messageHelper.setText(emailTemplateContent, true);
 
             javaMailSender.send(mimeMessage);
@@ -90,5 +90,26 @@ public class EmailServiceImpl implements EmailService {
             throw new ApplicationException(e.getMessage());
         }
     }
+
+    /**
+     * Sends a start notification email for a given process.
+     *
+     * @param processName the name of the process for which the notification is being sent
+     */
+    @Override
+    public void sendStartNotificationEmail(String processName) {
+        sendNotificationEmail(processName, PROCESS_START_NOTIFICATION_TEMPLATE, PROCESS_START_NOTIFICATION);
+    }
+
+    /**
+     * Sends a notification email indicating the start of the code revamp process.
+     *
+     * @param processName the name of the process for which the notification is being sent
+     */
+    @Override
+    public void sendCodeRevampStartNotificationEmail(String processName) {
+        sendNotificationEmail(processName, CODE_REVAMP_START_NOTIFICATION_TEMPLATE, CODE_REVAMP_START_NOTIFICATION);
+    }
+
 
 }
