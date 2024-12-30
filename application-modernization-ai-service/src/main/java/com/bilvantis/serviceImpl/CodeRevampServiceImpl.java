@@ -2,7 +2,6 @@ package com.bilvantis.serviceImpl;
 
 import com.bilvantis.exception.ApplicationException;
 import com.bilvantis.exception.ResourceNotFoundException;
-import com.bilvantis.model.CodeRevamp;
 import com.bilvantis.model.CodeRevampProcess;
 import com.bilvantis.model.CodeRevampProcessSteps;
 import com.bilvantis.model.CodeRevampTranscation;
@@ -50,34 +49,16 @@ public class CodeRevampServiceImpl implements CodeRevampService {
     }
 
     /**
-     * Creates a new code revamp process and saves it to the repository.
+     * Creates a new code revamp process steps and saves it to the repository.
      *
-     * @param codeRevamp the CodeRevamp object to be created
+     * @param codeRevampProcessSteps the CodeRevampSteps object to be created
      * @throws ApplicationException if there is an error during the database operation
      */
     @Override
-    public void createCodeRevampProcess(CodeRevamp codeRevamp) {
+    public void createRevampProcessSteps(List<CodeRevampProcessSteps> codeRevampProcessSteps) {
         try {
-            codeRevamp.setCodeRevampId(UUID.randomUUID().toString());
-            codeRevampRepository.save(codeRevamp);
-        } catch (DataAccessException e) {
-            log.error(appModernizationProperties.getExceptionErrorMessage(), this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName(), e.getMessage());
-            throw new ApplicationException(e.getMessage());
-        }
-
-    }
-
-    /**
-     * Creates new revamp process steps and saves them to the repository.
-     *
-     * @param codeRevamp the CodeRevampProcessSteps object to be created
-     * @throws ApplicationException if there is an error during the database operation
-     */
-    @Override
-    public void createRevampProcessSteps(CodeRevampProcessSteps codeRevamp) {
-        try {
-            codeRevamp.setCodeRevampStepId(UUID.randomUUID().toString());
-            codeRevampProcessStepsRepository.save(codeRevamp);
+            codeRevampProcessSteps.forEach(processStep -> processStep.setCodeRevampStepId(UUID.randomUUID().toString()));
+            codeRevampProcessStepsRepository.saveAll(codeRevampProcessSteps);
         } catch (DataAccessException e) {
             log.error(appModernizationProperties.getExceptionErrorMessage(), this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName(), e.getMessage());
             throw new ApplicationException(e.getMessage());

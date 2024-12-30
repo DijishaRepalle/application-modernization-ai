@@ -1,14 +1,14 @@
 package com.bilvantis.service;
 
-import com.bilvantis.model.CodeRevamp;
 import com.bilvantis.model.CodeRevampProcess;
 import com.bilvantis.model.CodeRevampProcessSteps;
 import org.springframework.transaction.annotation.Transactional;
 
-public interface CodeRevampService {
-    void createCodeRevampProcess(CodeRevamp codeRevamp);
+import java.util.List;
 
-    void createRevampProcessSteps(CodeRevampProcessSteps codeRevamp);
+public interface CodeRevampService {
+
+    void createRevampProcessSteps(List<CodeRevampProcessSteps> codeRevamp);
 
     void createRevampProcess(CodeRevampProcess codeRevamp);
 

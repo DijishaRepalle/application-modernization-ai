@@ -1,12 +1,13 @@
 package com.bilvantis.controller;
 
-import com.bilvantis.model.CodeRevamp;
 import com.bilvantis.model.CodeRevampProcess;
 import com.bilvantis.model.CodeRevampProcessSteps;
 import com.bilvantis.service.CodeRevampService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.bilvantis.util.Status.SUCCESS;
 
@@ -21,12 +22,6 @@ public class CodeRevampController {
         this.codeRevampService = codeRevampService;
     }
 
-    @PostMapping
-    public ResponseEntity<String> createProcess(@RequestBody CodeRevamp codeRevamp) {
-        codeRevampService.createCodeRevampProcess(codeRevamp);
-        return new ResponseEntity<>(SUCCESS.getStatus(), HttpStatus.CREATED);
-    }
-
     @PostMapping("/process")
     public ResponseEntity<String> createCodeRevampProcess(@RequestBody CodeRevampProcess codeRevamp) {
         codeRevampService.createRevampProcess(codeRevamp);
@@ -34,7 +29,7 @@ public class CodeRevampController {
     }
 
     @PostMapping("/steps")
-    public ResponseEntity<String> createCodeRevampProcessSteps(@RequestBody CodeRevampProcessSteps codeRevamp) {
+    public ResponseEntity<String> createCodeRevampProcessSteps(@RequestBody List<CodeRevampProcessSteps> codeRevamp) {
         codeRevampService.createRevampProcessSteps(codeRevamp);
         return new ResponseEntity<>(SUCCESS.getStatus(), HttpStatus.CREATED);
     }
