@@ -98,7 +98,7 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
             }
             ProjectInformation projectInformation = projectInformationRepository.findById(projectId).orElseThrow(() -> {
                 log.error(PROJECT_ID_NOT_FOUND, projectId);
-                throw  new DataNotFoundException(PROJECT_ID_NOT_FOUND);
+                throw new DataNotFoundException(String.format(PROJECT_ID_NOT_FOUND,projectId));
             });
 
             projectInformationRepository.deleteById(projectId);
@@ -122,7 +122,7 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
             ProjectInformation projectInformation = projectInformationRepository.findById(projectId).orElseThrow(() ->
             {
                 log.error(PROJECT_ID_NOT_FOUND,projectId);
-                throw  new DataNotFoundException(PROJECT_ID_NOT_FOUND);
+                throw new DataNotFoundException(String.format(PROJECT_ID_NOT_FOUND,projectId));
             });
             projectInformation.setProjectName(projectInfoDTO.getProjectName());
             projectInformation.setProgrammingLanguage(projectInfoDTO.getProgrammingLanguage());

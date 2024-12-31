@@ -256,7 +256,7 @@ public class UserInformationServiceImpl implements UserInformationService<UserIn
         return projectInformationRepository.findByProjectCode(projectCode)
                 .orElseThrow(() ->{
                     log.error(PROJECT_CODE_NOT_FOUND,projectCode);
-                   throw new DataNotFoundException(PROJECT_CODE_NOT_FOUND);
+                   throw new DataNotFoundException(String.format(PROJECT_CODE_NOT_FOUND,projectCode));
                         });
 
     }
