@@ -15,16 +15,22 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static com.bilvantis.constants.ProjectInformationServiceImplConstants.EXCEPTION_ERROR_MESSAGE;
+import static com.bilvantis.constants.UserInformationRepositoryConstants.*;
+
 @Repository
 @Slf4j
 public class CustomUserInformationRepositoryImpl implements CustomUserInformationRepository {
+    private final MongoTemplate mongoTemplate;
     @Autowired
-    private MongoTemplate mongoTemplate;
+    public CustomUserInformationRepositoryImpl(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
 
     @Override
     public Integer saveOtpAndOtpGenerationTime(String phoneNumber, String otp, Long otpGenerationTime) {
-        Query query = new Query(Criteria.where("phoneNumber").is(phoneNumber));
-        Update update = new Update().set("otp", otp).set("otpGenerationTime", otpGenerationTime);
+        Query query = new Query(Criteria.where(PHONE_NUMBER).is(phoneNumber));
+        Update update = new Update().set(OTP, otp).set(OTP_GEN_TIME, otpGenerationTime);
         UpdateResult result = mongoTemplate.updateFirst(query, update, UserInformation.class);
         return Math.toIntExact(result.getModifiedCount());
     }
@@ -33,7 +39,7 @@ public class CustomUserInformationRepositoryImpl implements CustomUserInformatio
     @Override
     public String findRoleByUserId(String userId) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("id").is(userId));
+        query.addCriteria(Criteria.where(ID).is(userId));
         UserInformation user = mongoTemplate.findOne(query, UserInformation.class);
 
         if (user != null) {
@@ -57,7 +63,7 @@ public class CustomUserInformationRepositoryImpl implements CustomUserInformatio
     @Override
     public Optional<UserInformation> findByEmail(String email) {
         UserInformation user = mongoTemplate.findOne(
-                Query.query(Criteria.where("email").is(email)),
+                Query.query(Criteria.where(EMAIl).is(email)),
                 UserInformation.class
         );
         return Optional.ofNullable(user);
@@ -81,11 +87,11 @@ public class CustomUserInformationRepositoryImpl implements CustomUserInformatio
 
     public UserInformation editUser(String email, UserInformation updatedUserDetails) {
         Update update = new Update()
-                .set("firstName", updatedUserDetails.getFirstName())
-                .set("lastName", updatedUserDetails.getLastName())
-                .set("updatedAt", LocalDateTime.now());
+                .set(FIRST_NAME, updatedUserDetails.getFirstName())
+                .set(LAST_NAME, updatedUserDetails.getLastName())
+                .set(UPDATED_AT, LocalDateTime.now());
 
-        Query query = new Query(Criteria.where("email").is(email));
+        Query query = new Query(Criteria.where(EMAIl).is(email));
 
         // Execute the update based on email
         return mongoTemplate.findAndModify(
@@ -112,13 +118,15 @@ public class CustomUserInformationRepositoryImpl implements CustomUserInformatio
     public void delete(String email) {
         try {
             Query query = new Query();
-            query.addCriteria(Criteria.where("email").is(email));
+            query.addCriteria(Criteria.where(EMAIl).is(email));
             long deletedCount = mongoTemplate.remove(query, UserInformation.class).getDeletedCount();
             if (0 < deletedCount) {
-                log.error("No record found to delete");
+                log.error(RECORDS_NOT_FOUND);
+                throw new ResourceNotFoundException(RECORDS_NOT_FOUND);
             }
         } catch (Exception e) {
-            throw new ResourceNotFoundException("An error occurred while deleting the user: " + e.getMessage());
+            log.error(EXCEPTION_ERROR_MESSAGE, this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName());
+            throw new ResourceNotFoundException(e.getMessage());
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.bilvantis.controller;
 
 
-import com.bilvantis.config.CloneRequest;
+import com.bilvantis.model.CloneRequest;
 import com.bilvantis.model.UserResponseDTO;
 import com.bilvantis.serviceImpl.GitCloneService;
 import com.bilvantis.util.UserRequestResponseBuilder;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
-import static com.bilvantis.util.AppModernizationAPIConstants.REPO_CLONE_SUCCESS;
+import static com.bilvantis.constants.AppModernizationAPIConstants.REPO_CLONE_SUCCESS;
 
 @RestController
 @Slf4j

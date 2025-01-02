@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.bilvantis.constants.Status.SUCCESS;
+import static com.bilvantis.util.Status.SUCCESS;
 
 @RestController
 @RequestMapping("/process")
@@ -54,7 +54,7 @@ public class ProcessController {
      * @return a ResponseEntity containing a list of ProcessTransaction objects and HTTP status code.
      */
 
-    @GetMapping("/scan/project")
+    @GetMapping("/scan-project")
     public ResponseEntity<List<ProcessTransaction>> fetchProcessTransactionsForJobId(@RequestParam("projectCode") String projectCode,
                                                                                      @RequestParam("jobId") String jobId) {
         return new ResponseEntity<>(processService.fetchProcessTransactionsForJobId(projectCode, jobId), HttpStatus.OK);

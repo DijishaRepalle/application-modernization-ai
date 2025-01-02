@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-import static com.bilvantis.util.AppModernizationAPIConstants.PROJECT_CODE;
+import static com.bilvantis.constants.AppModernizationAPIConstants.*;
+
 
 @Component
 public class ProjectCodeGenerator {
@@ -51,9 +52,9 @@ public class ProjectCodeGenerator {
         int currentMax = Optional.ofNullable(highestCode)
                 .filter(code -> code.startsWith(PROJECT_CODE))
                 .map(code -> Integer.parseInt(code.substring(PROJECT_CODE.length())))
-                .orElse(0);
-        int newCode = currentMax + 1;
-        return PROJECT_CODE + String.format("%04d", newCode);
+                .orElse(ZERO);
+        int newCode = currentMax + ONE;
+        return PROJECT_CODE + String.format(PROJECT_NEW_CODE, newCode);
     }
 
 }

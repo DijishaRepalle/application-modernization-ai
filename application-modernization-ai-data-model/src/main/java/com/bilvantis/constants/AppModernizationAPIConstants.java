@@ -1,4 +1,4 @@
-package com.bilvantis.util;
+package com.bilvantis.constants;
 
 public class AppModernizationAPIConstants {
     public static final String GLOBAL_FIELD_ID = "GLOBAL";
@@ -48,9 +48,11 @@ public class AppModernizationAPIConstants {
     public static final String JOB_ID = "001";
 
     public static final Integer ZERO = 0;
+    public static final Integer ONE = 1;
     public static final Boolean TRUE = true;
     public static final String TOKEN_NOT_FOUND = "Token cannot be bull or empty";
 
     public static final String INVALID_TOKEN = "Invalid token provided";
+    public static final String PROJECT_NEW_CODE="%04d";
 
 }

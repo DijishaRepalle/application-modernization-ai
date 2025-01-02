@@ -1,4 +1,4 @@
-package com.bilvantis.util;
+package com.bilvantis.constants;
 
 public class UserInformationServiceImplConstants {
     public static final String USER_LIST_NOT_FOUND="User details  list not found";

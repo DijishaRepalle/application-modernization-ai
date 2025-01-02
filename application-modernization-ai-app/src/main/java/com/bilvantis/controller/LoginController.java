@@ -1,9 +1,9 @@
 package com.bilvantis.controller;
 
+import com.bilvantis.constants.AppModernizationAPIConstants;
 import com.bilvantis.model.UserInformation;
 import com.bilvantis.model.UserResponseDTO;
 import com.bilvantis.service.LoginService;
-import com.bilvantis.util.AppModernizationAPIConstants;
 import com.bilvantis.util.UserRequestResponseBuilder;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

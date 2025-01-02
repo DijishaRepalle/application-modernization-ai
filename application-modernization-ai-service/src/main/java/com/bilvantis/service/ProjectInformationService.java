@@ -16,8 +16,5 @@ public interface ProjectInformationService<I extends ProjectInformation, J exten
 
     J updateProjectByProjectId(String projectId, J projectInformationDTO);
 
-    J addUsersToProject(String projectCode, List<UserInformationDTO> users);
-
-    J removeTaggedUsersFromProject(String projectCode, List<String> userIds);
 
 }

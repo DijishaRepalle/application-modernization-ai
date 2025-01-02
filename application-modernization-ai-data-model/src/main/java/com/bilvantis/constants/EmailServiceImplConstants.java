@@ -1,4 +1,4 @@
-package com.bilvantis.util;
+package com.bilvantis.constants;
 
 public class EmailServiceImplConstants {
     public static final String OTP_EMAIl_TEMPLATE = "otpEmail-Template.html";
@@ -12,4 +12,10 @@ public class EmailServiceImplConstants {
     public static final String INITIATED = "initiated";
 
     public static final String TRUE="true";
+
+    public static final String CODE_REVAMP_START_NOTIFICATION_TEMPLATE = "codeRevampStartNotification-Template.html";
+
+    public static final String CODE_REVAMP_START_NOTIFICATION = "Code Revamp Start Notification";
+
+
 }

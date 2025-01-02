@@ -6,7 +6,7 @@ import com.bilvantis.util.UserRequestResponseBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.bilvantis.util.ModernizationAppConstants.START_NOTIFICATION_SUCCESS;
+import static com.bilvantis.constants.ModernizationAppConstants.START_NOTIFICATION_SUCCESS;
 
 @RestController
 @RequestMapping("/api/email")
@@ -34,9 +34,20 @@ public class EmailController {
      * @see EmailService#sendStartNotificationEmail(String)
      */
 
-    @PostMapping("/sendStartNotification")
-    public ResponseEntity<UserResponseDTO> sendStartNotification(@RequestBody String processName) {
+    @PostMapping("/send-start-notification")
+    public ResponseEntity<UserResponseDTO> sendStartNotification(@RequestParam String processName) {
         emailService.sendStartNotificationEmail(processName);
+        return ResponseEntity.ok(UserRequestResponseBuilder.buildResponseDTO(null, null, START_NOTIFICATION_SUCCESS));
+    }
+    /**
+     * Sends a notification email indicating the start of the code revamp process.
+     *
+     * @param processName the name of the process for which the notification is being sent
+     * @return ResponseEntity containing the UserResponseDTO with the success message
+     */
+    @PostMapping("/send-code-revamp-start-notification")
+    public ResponseEntity<UserResponseDTO> sendCodeRevampStartNotificationEmail(@RequestParam String processName) {
+        emailService.sendCodeRevampStartNotificationEmail(processName);
         return ResponseEntity.ok(UserRequestResponseBuilder.buildResponseDTO(null, null, START_NOTIFICATION_SUCCESS));
     }
 }

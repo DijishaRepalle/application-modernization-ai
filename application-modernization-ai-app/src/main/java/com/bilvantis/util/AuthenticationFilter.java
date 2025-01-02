@@ -15,10 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-import static com.bilvantis.config.ConfigConstants.*;
+import static com.bilvantis.constants.ConfigConstants.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Slf4j

@@ -1,4 +1,4 @@
-package com.bilvantis.constants;
+package com.bilvantis.util;
 
 import lombok.Getter;
 
