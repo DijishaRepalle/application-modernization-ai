@@ -273,7 +273,7 @@ public class ProcessServiceImpl implements ProcessService {
     private String generateJobId() {
         try {
             StringBuilder jobId = new StringBuilder(JOB);
-            processTransactionRepository.findLatestRecord().ifPresentOrElse(
+            processTransactionRepository.findTopByOrderByCreatedByDesc().ifPresentOrElse(
                     transaction -> {
                         int seqNo = Integer.parseInt(transaction.getJobId().substring(3));
                         int newSeqNo = seqNo + 1;
