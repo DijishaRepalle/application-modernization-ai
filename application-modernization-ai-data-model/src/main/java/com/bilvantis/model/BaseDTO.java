@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -12,11 +13,11 @@ import java.util.Date;
 public class BaseDTO {
     private String createdBy;
 
-    private Date createdDate;
+    private LocalDateTime createdDate;
 
     private String updatedBy;
 
-    private Date updatedDate;
+    private LocalDateTime updatedDate;
 
     private Boolean isActive;
 }

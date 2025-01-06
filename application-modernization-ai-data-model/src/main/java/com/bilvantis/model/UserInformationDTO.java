@@ -3,6 +3,7 @@ package com.bilvantis.model;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
+
 @Data
 public class UserInformationDTO extends BaseDTO {
     @Id
@@ -14,5 +15,5 @@ public class UserInformationDTO extends BaseDTO {
     private String phoneNumber;
     private String otp;
     private Long otpGenerationTime;
-
+    private String role;
 }
