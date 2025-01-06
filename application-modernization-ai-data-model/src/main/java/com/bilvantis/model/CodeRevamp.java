@@ -22,5 +22,7 @@ public class CodeRevamp extends BaseDTO {
 
     private String projectCode;
 
+    private String jobId;
 
+    private String programmingLanguage;
 }
