@@ -45,8 +45,7 @@ public class ProcessController {
     public ResponseEntity<List<ProcessTransaction>> fetchProjectUniqueProcesses() {
         return new ResponseEntity<>(processService.fetchAllProjectScansOnJobId(), HttpStatus.OK);
     }
-
-    /**
+      /**
      * Fetches process transactions for a specific project and job ID.
      *
      * @param projectCode the unique code of the project.
@@ -83,5 +82,15 @@ public class ProcessController {
     public ResponseEntity<String> createProcessSteps(@RequestBody List<ProcessSteps> processSteps) {
         processService.createProcessSteps(processSteps);
         return new ResponseEntity<>(SUCCESS.getStatus(), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/projects")
+    public List<String> getProjectsByProcessId(@RequestParam String processId) {
+        return processService.getProjectsByProcessId(processId);
+    }
+
+    @GetMapping("/transactions")
+    public List<ProcessTransaction> getTransactionsByProcessId(@RequestParam String processId) {
+        return processService.getTransactionsByProcessId(processId);
     }
 }

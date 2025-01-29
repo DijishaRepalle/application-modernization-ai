@@ -19,4 +19,8 @@ public interface ProcessService {
     void createProcess(Process process);
 
     void createProcessSteps(List<ProcessSteps> processSteps);
+
+    List<String> getProjectsByProcessId(String processId);
+
+    List<ProcessTransaction> getTransactionsByProcessId(String processId);
 }

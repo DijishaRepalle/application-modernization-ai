@@ -20,7 +20,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -67,7 +66,7 @@ public class ProcessServiceImpl implements ProcessService {
     @Override
     @Transactional
     public void createProcessSchedule(String projectCode, String processName) {
-
+        validateProcessNotInProgress(projectCode, processName);
         List<ProcessSteps> processSteps = processStepsRepository.findByProcessName(processName);
 
         if (CollectionUtils.isEmpty(processSteps)) {
@@ -75,11 +74,28 @@ public class ProcessServiceImpl implements ProcessService {
                     .concat(ProcessErrorEnum.PROCESS_STEPS_NOT_FOUND.getMessage()));
             throw new ResourceNotFoundException(String.format(ERROR_EXCEPTION_LOG_PREFIX,
                     ProcessErrorEnum.PROCESS_STEPS_NOT_FOUND.getErrorId()
-                    .concat(ProcessErrorEnum.PROCESS_STEPS_NOT_FOUND.getMessage())));
+                            .concat(ProcessErrorEnum.PROCESS_STEPS_NOT_FOUND.getMessage())));
         }
-        List<ProcessTransaction> processTransactionSet = buildProcessTransactions(processSteps, projectCode);
 
+        List<ProcessTransaction> processTransactionSet = buildProcessTransactions(processSteps, projectCode, processName);
         processTransactionRepository.saveAll(processTransactionSet);
+    }
+
+    private void validateProcessNotInProgress(String projectCode, String processName) {
+        // Fetch all stepIds for the given processName
+        List<String> stepIds = processStepsRepository.findByProcessName(processName)
+                .stream()
+                .map(ProcessSteps::getStepId)
+                .collect(Collectors.toList());
+
+        // Check if any ProcessTransaction exists for the given projectCode and stepIds
+        boolean processInProgress = processTransactionRepository.existsByProjectCodeAndStepIdIn(projectCode, stepIds);
+
+        if (processInProgress) {
+            throw new ResourceNotFoundException(String.format(ERROR_EXCEPTION_LOG_PREFIX,
+                    ProcessErrorEnum.PROCESS_ALREADY_IN_PROGRESS.getErrorId()
+                            .concat(ProcessErrorEnum.PROCESS_ALREADY_IN_PROGRESS.getMessage())));
+        }
     }
 
     /**
@@ -214,6 +230,8 @@ public class ProcessServiceImpl implements ProcessService {
         }
     }
 
+
+
     /**
      * Builds a list of {@link ProcessTransaction} objects based on the provided process steps and project code.
      * <p>
@@ -228,13 +246,13 @@ public class ProcessServiceImpl implements ProcessService {
      */
 
 
-    private List<ProcessTransaction> buildProcessTransactions(List<ProcessSteps> processSteps, String projectCode) {
+    private List<ProcessTransaction> buildProcessTransactions(List<ProcessSteps> processSteps, String projectCode, String processName) {
         try {
             List<ProcessTransaction> processTransactionSet = new ArrayList<>();
             processSteps.forEach(processStep -> {
                 ProcessTransaction processTransaction = new ProcessTransaction();
                 processTransaction.setProcessTransactionId(UUID.randomUUID().toString());
-                processTransaction.setJobId(generateJobId());
+                processTransaction.setJobId(generateJobId(processName));
                 if (processStep.getStepSequence() == 1) {
                     processTransaction.setStatus(Status.TO_DO.getStatus());
                 } else {
@@ -248,11 +266,10 @@ public class ProcessServiceImpl implements ProcessService {
                 processTransactionSet.add(processTransaction);
             });
             return processTransactionSet;
-        } catch(DataAccessException e){
+        } catch (DataAccessException e) {
             log.error(appModernizationProperties.getExceptionErrorMessage(), this.getClass().getSimpleName(),
                     e.getStackTrace()[0].getMethodName(), e.getMessage());
             throw new ApplicationException(e.getMessage());
-
         }
     }
 
@@ -270,17 +287,24 @@ public class ProcessServiceImpl implements ProcessService {
      * @throws NumberFormatException if the numeric part of the job ID cannot be parsed.
      */
 
-    private String generateJobId() {
+
+    private String generateJobId(String processName) {
         try {
-            StringBuilder jobId = new StringBuilder(JOB);
-            processTransactionRepository.findTopByOrderByCreatedByDesc().ifPresentOrElse(
+            // Get the prefix for the given processName
+            String prefix = ProcessConstants.PROCESS_PREFIX_MAP.getOrDefault(processName, ProcessConstants.DEFAULT_PREFIX);
+
+            StringBuilder jobId = new StringBuilder(prefix);
+
+            processTransactionRepository.findTopByJobIdStartingWithOrderByCreatedByDesc(prefix).ifPresentOrElse(
                     transaction -> {
-                        int seqNo = Integer.parseInt(transaction.getJobId().substring(3));
+                        // Extract the numeric part of the job ID
+                        String numericPart = transaction.getJobId().substring(prefix.length());
+                        int seqNo = Integer.parseInt(numericPart);
                         int newSeqNo = seqNo + 1;
-                        jobId.append(newSeqNo);
+                        jobId.append(String.format("%03d", newSeqNo));
                     },
                     () -> {
-                        jobId.append(JOB_ID);
+                        jobId.append("001");
                     }
             );
 
@@ -289,7 +313,44 @@ public class ProcessServiceImpl implements ProcessService {
             log.error(appModernizationProperties.getExceptionErrorMessage(), this.getClass().getSimpleName(),
                     e.getStackTrace()[0].getMethodName(), e.getMessage());
             throw new ApplicationException(e.getMessage());
-
         }
     }
-}
+
+        @Override
+        public List<String> getProjectsByProcessId(String processId) {
+            // Fetch all stepIds for the given processId
+            List<String> stepIds = processStepsRepository.findByProcessName(processId)
+                    .stream()
+                    .map(ProcessSteps::getStepId)
+                    .collect(Collectors.toList());
+
+            // Fetch distinct projectCodes for the given stepIds
+            List<ProcessTransaction> transactions = processTransactionRepository.findDistinctProjectCodeByStepIdIn(stepIds);
+
+            // Extract and return unique projectCodes
+            return transactions.stream()
+                    .map(ProcessTransaction::getProjectCode)
+                    .distinct()
+                    .collect(Collectors.toList());
+        }
+
+    @Override
+    public List<ProcessTransaction> getTransactionsByProcessId(String processId) {
+        // Fetch all stepIds for the given processId
+        List<ProcessSteps> processSteps = processStepsRepository.findByProcessName(processId);
+        log.info("Fetched ProcessSteps for processId {}: {}", processId, processSteps);
+
+        List<String> stepIds = processSteps.stream()
+                .map(ProcessSteps::getStepId)
+                .collect(Collectors.toList());
+        log.info("Step IDs extracted: {}", stepIds);
+
+        // Fetch all transactions for the given stepIds
+        List<ProcessTransaction> transactions = processTransactionRepository.findByStepIdIn(stepIds);
+        log.info("Fetched ProcessTransactions: {}", transactions);
+
+        return transactions;
+    }
+
+    }
+

@@ -21,4 +21,12 @@ public interface ProcessTransactionRepository extends MongoRepository<ProcessTra
     List<ProcessTransaction> findAll();
     List<ProcessTransaction> findAllByProjectCodeAndJobId(String projectCode, String jobId, Sort sort);
 
+    List<ProcessTransaction> findByJobId(String stepName);
+    List<ProcessTransaction> findDistinctProjectCodeByStepIdIn(List<String> stepIds);
+    @Query("{ 'stepId': { $in: ?0 } }")
+    List<ProcessTransaction> findByStepIdIn(List<String> stepIds);
+    Optional<ProcessTransaction> findTopByJobIdStartingWithOrderByCreatedByDesc(String prefix);
+    boolean existsByProjectCodeAndStepIdIn(String projectCode, List<String> stepIds);
+
+
 }
