@@ -42,8 +42,9 @@ public class ProcessController {
      */
 
     @GetMapping("/scan")
-    public ResponseEntity<List<ProcessTransaction>> fetchProjectUniqueProcesses() {
-        return new ResponseEntity<>(processService.fetchAllProjectScansOnJobId(), HttpStatus.OK);
+    public ResponseEntity<List<ProcessTransaction>> fetchProjectUniqueProcesses(@RequestParam String processName) {
+        List<ProcessTransaction> transactions = processService.fetchAllProjectScansOnJobId(processName);
+        return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
       /**
      * Fetches process transactions for a specific project and job ID.

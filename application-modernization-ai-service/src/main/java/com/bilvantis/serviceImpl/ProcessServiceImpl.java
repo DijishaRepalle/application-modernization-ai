@@ -109,17 +109,27 @@ public class ProcessServiceImpl implements ProcessService {
      * @return A distinct list of {@link ProcessTransaction} objects, each uniquely identified by its job ID.
      * @see ProcessTransactionRepository#findAll()
      */
-
     @Override
-    public List<ProcessTransaction> fetchAllProjectScansOnJobId() {
-        List<ProcessTransaction> processTransactions = processTransactionRepository.findAll();
+    public List<ProcessTransaction> fetchAllProjectScansOnJobId(String processName) {
+        // Fetch ProcessSteps filtered by processName
+        List<ProcessSteps> processSteps = processStepsRepository.findByProcessName(processName);
 
+        // Extract stepIds from ProcessSteps
+        List<String> stepIds = processSteps.stream()
+                .map(ProcessSteps::getStepId)
+                .collect(Collectors.toList());
+
+        // Fetch ProcessTransaction records based on stepIds
+        List<ProcessTransaction> processTransactions = processTransactionRepository.findByStepIdIn(stepIds);
+
+        // Group transactions by jobId (keep the first record for each jobId)
         Map<String, ProcessTransaction> groupedByJobId = processTransactions.stream()
                 .collect(Collectors.toMap(
                         ProcessTransaction::getJobId,
                         transaction -> transaction,
                         (existing, replacement) -> existing // Keep the existing record if jobId is duplicated
                 ));
+
         return new ArrayList<>(groupedByJobId.values());
     }
 
@@ -351,6 +361,5 @@ public class ProcessServiceImpl implements ProcessService {
 
         return transactions;
     }
-
     }
 

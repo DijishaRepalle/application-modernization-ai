@@ -1,7 +1,7 @@
 package com.bilvantis.repository;
 
 import com.bilvantis.model.ProcessTransaction;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort;import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -27,6 +27,4 @@ public interface ProcessTransactionRepository extends MongoRepository<ProcessTra
     List<ProcessTransaction> findByStepIdIn(List<String> stepIds);
     Optional<ProcessTransaction> findTopByJobIdStartingWithOrderByCreatedByDesc(String prefix);
     boolean existsByProjectCodeAndStepIdIn(String projectCode, List<String> stepIds);
-
-
 }
