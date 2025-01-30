@@ -34,7 +34,7 @@ subprojects {
     version = '0.0.1-SNAPSHOT'
 
     java {
-        sourceCompatibility = '20'
+        sourceCompatibility = '17'
     }
 
     configurations {
@@ -78,7 +78,6 @@ subprojects {
         implementation group: 'org.apache.poi', name: 'poi', version: apachePoiVersion
         implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
         implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
-
     }
 
     tasks.named('test') {

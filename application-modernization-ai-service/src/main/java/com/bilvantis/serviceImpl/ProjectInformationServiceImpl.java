@@ -6,19 +6,21 @@ import com.bilvantis.exception.ProjectImplementationSaveFailedException;
 import com.bilvantis.model.ProjectInformation;
 import com.bilvantis.model.ProjectInformationDTO;
 import com.bilvantis.repository.ProjectInformationRepository;
+import com.bilvantis.repository.UserInformationRepository;
 import com.bilvantis.service.ProjectInformationService;
 import com.bilvantis.util.ProjectInformationSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.bilvantis.util.ProjectInformationServiceConstants.*;
+import static com.bilvantis.constants.ProjectInformationServiceImplConstants.*;
 import static com.bilvantis.util.ProjectInformationSupport.convertProjectDTOToProjectEntity;
 import static com.bilvantis.util.ProjectInformationSupport.convertProjectEntityToProjectDTO;
 
@@ -26,17 +28,27 @@ import static com.bilvantis.util.ProjectInformationSupport.convertProjectEntityT
 @Slf4j
 public class ProjectInformationServiceImpl implements ProjectInformationService<ProjectInformation, ProjectInformationDTO> {
     private final ProjectInformationRepository projectInformationRepository;
+    private final UserInformationRepository userInformationRepository;
 
-    public ProjectInformationServiceImpl(ProjectInformationRepository projectInformationRepository) {
+    @Autowired
+    public ProjectInformationServiceImpl(ProjectInformationRepository projectInformationRepository, UserInformationRepository userInformationRepository) {
         this.projectInformationRepository = projectInformationRepository;
+        this.userInformationRepository = userInformationRepository;
     }
 
+    /**
+     * creates a project with Project details
+     *
+     * @param projectInformationDTO ProjectInformationDTO
+     * @return a response containing the created project information
+     */
 
     @Override
     public ProjectInformationDTO createProject(ProjectInformationDTO projectInformationDTO) {
         try {
             if (ObjectUtils.isEmpty(projectInformationDTO)) {
-                throw new DataNotFoundException(PROJECT_DETAILS_NOT_FOUND);
+                log.error(PROJECT_DETAILS_NOT_FOUND);
+                throw new ProjectImplementationSaveFailedException(PROJECT_DETAILS_NOT_FOUND);
             }
             ProjectInformation saveProjectDetails = projectInformationRepository.save(convertProjectDTOToProjectEntity(projectInformationDTO));
             return convertProjectEntityToProjectDTO(saveProjectDetails);
@@ -46,54 +58,76 @@ public class ProjectInformationServiceImpl implements ProjectInformationService<
         }
     }
 
+    /**
+     * Retrieves all projects information.
+     *
+     * @return a list of all projects
+     */
     @Override
     public List<ProjectInformationDTO> getAllProjectInformation() {
         try {
             List<ProjectInformation> listOfProjects = projectInformationRepository.findAll();
             if (CollectionUtils.isEmpty(listOfProjects)) {
-                throw new DataNotFoundException(PROJECT_DETAILS_NOT_FOUND);
+                log.error(PROJECTS_LIST_NOT_FOUND);
+                throw new DataNotFoundException(PROJECTS_LIST_NOT_FOUND);
             }
-            return listOfProjects.stream().map(ProjectInformationSupport::convertProjectEntityToProjectDTO).collect(Collectors.toList());
+
+            // sorting the projects by alphabetical order
+            listOfProjects.sort(Comparator.comparing(ProjectInformation::getProjectName));
+            return listOfProjects.stream()
+                    .map(ProjectInformationSupport::convertProjectEntityToProjectDTO)
+                    .collect(Collectors.toList());
 
         } catch (DataAccessException e) {
-            log.error(EXCEPTION_ERROR_MESSAGE, this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName());
+            log.error(EXCEPTION_ERROR_MESSAGE, this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName(), e);
             throw new ApplicationException(e.getMessage());
         }
     }
 
+    /**
+     * Deletes a project based on the provided project ID.
+     *
+     * @param projectId String
+     */
     @Override
     public void deleteProjectById(String projectId) {
         try {
             if (ObjectUtils.isEmpty(projectId)) {
-                throw new DataNotFoundException(PROJECT_ID_NOT_FOUND);
+                log.error(PROJECT_ID_NOT_NULL);
+                throw new ApplicationException(PROJECT_ID_NOT_NULL);
             }
-            Optional<ProjectInformation> projectInformation = projectInformationRepository.findById(projectId);
-            if (projectInformation.isPresent()) {
-                ProjectInformation updatedInfo = projectInformation.get();
-//                updatedInfo.setIsActive(false);
-                projectInformationRepository.save(updatedInfo);
-            } else {
-                throw new DataNotFoundException(String.format(PROJECT_ID_NOT_FOUND));
-            }
+            ProjectInformation projectInformation = projectInformationRepository.findById(projectId).orElseThrow(() -> {
+                log.error(PROJECT_ID_NOT_FOUND, projectId);
+                throw new DataNotFoundException(String.format(PROJECT_ID_NOT_FOUND,projectId));
+            });
+
+            projectInformationRepository.deleteById(projectId);
+
         } catch (DataAccessException e) {
             log.error(EXCEPTION_ERROR_MESSAGE, this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName());
             throw new ApplicationException(e.getMessage());
         }
     }
 
+    /**
+     * Updates the project information based on the provided project ID.
+     *
+     * @param projectId      String
+     * @param projectInfoDTO ProjectInformationDTO
+     * @return the updated project information DTO
+     */
     @Override
-    public ProjectInformationDTO updateProjectByProjectId(String projectId, ProjectInformationDTO projectInformationDTO) {
+    public ProjectInformationDTO updateProjectByProjectId(String projectId, ProjectInformationDTO projectInfoDTO) {
         try {
-            if (ObjectUtils.isEmpty(projectId)) {
-                throw new DataNotFoundException(PROJECT_ID_NOT_FOUND);
-            }
-            Optional<ProjectInformation> optionalProjectInformation = projectInformationRepository.findById(projectId);
-            if (optionalProjectInformation.isPresent()) {
-                ProjectInformation existingProjectInfo = projectInformationRepository.save(convertProjectDTOToProjectEntity(projectInformationDTO));
-                return convertProjectEntityToProjectDTO(existingProjectInfo);
-            }
-            throw new ApplicationException(PROJECT_ID_NOT_FOUND);
-
+            ProjectInformation projectInformation = projectInformationRepository.findById(projectId).orElseThrow(() ->
+            {
+                log.error(PROJECT_ID_NOT_FOUND,projectId);
+                throw new DataNotFoundException(String.format(PROJECT_ID_NOT_FOUND,projectId));
+            });
+            projectInformation.setProjectName(projectInfoDTO.getProjectName());
+            projectInformation.setProgrammingLanguage(projectInfoDTO.getProgrammingLanguage());
+            ProjectInformation updatedProject = projectInformationRepository.save(projectInformation);
+            return ProjectInformationSupport.convertProjectEntityToProjectDTO(updatedProject);
         } catch (DataAccessException e) {
             log.error(EXCEPTION_ERROR_MESSAGE, this.getClass().getSimpleName(), e.getStackTrace()[0].getMethodName());
             throw new ApplicationException(e.getMessage());
